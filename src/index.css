@@ -1,24 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-primary: #000000;
-  --bg-glass: rgba(255, 255, 255, 0.05);
-  --bg-tertiary: #0a0a0b;
-  --accent-bolt: #eab308;
-  --accent-pulse: #7c3aed;
-  --text-primary: #ffffff;
+  --bg-primary: #0A0C18;
+  --bg-secondary: #13172a;
+  --bg-glass: rgba(19, 23, 42, 0.7);
+  --accent-bolt: #39FF14;
+  --accent-blue: #3b82f6;
+  --accent-orange: #f97316;
+  --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #475569;
-  --border-glass: rgba(255, 255, 255, 0.1);
-  --border-thin: 0.5px solid rgba(255, 255, 255, 0.08);
+  --border-thin: none;
   
-  --status-ok: #10b981;
+  --status-ok: #39FF14;
   --status-warning: #f59e0b;
   --status-danger: #ef4444;
+  --status-hazard: #a855f7;
 
-  --metallic-brushed: linear-gradient(135deg, #71717a 0%, #e4e4e7 25%, #71717a 50%, #e4e4e7 75%, #71717a 100%);
+  --metallic-gloss: linear-gradient(
+    135deg, 
+    rgba(255,255,255,0.2) 0%, 
+    rgba(255,255,255,0.05) 50%, 
+    rgba(0,0,0,0.1) 100%
+  );
 
   font-family: 'Inter', sans-serif;
+  letter-spacing: 0.025em;
 }
 
 body {
@@ -36,19 +43,53 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism utility - Refined for Elegance */
+/* Glassmorphism utility - Analyst Navy Edition */
 .glass-card {
   background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: var(--border-thin);
-  border-radius: 16px;
-  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: none;
+  border-radius: 24px;
+  padding: 2rem;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(19, 23, 42, 0.9);
+}
+
+/* Money Green Pulse */
+.money-green-pulse {
+  color: var(--accent-bolt);
+  filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.4));
+  animation: money-pulse 2s infinite;
+}
+
+@keyframes money-pulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(57, 255, 20, 0.4)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(57, 255, 20, 0.8)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(57, 255, 20, 0.4)); }
+}
+
+/* Primary Glossy Button */
+.btn-glossy {
+  background: var(--metallic-gloss);
+  background-color: var(--accent-blue);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.btn-glossy:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
 }
 
 /* Tabbed Navigation */

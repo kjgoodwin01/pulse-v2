@@ -9,7 +9,8 @@ import BurnRate from './BurnRate';
 import Ledger from './Ledger';
 import AutomationModule from './AutomationModule';
 import VerdictGatekeeper from './VerdictGatekeeper';
-import { Zap, Layout, PieChart, Activity, ShieldCheck, List } from 'lucide-react';
+import { Zap, ShieldCheck, Target, TrendingDown, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CommandCenter = () => {
   const { forecast, loading, burnRate } = useForecast();
@@ -28,7 +29,7 @@ const CommandCenter = () => {
       setDiscoverBalance(parseFloat(discover));
 
       const debtResults = await db.select().from(debts);
-      setDebtData(debtResults[0] || { name: 'Student Loan', current_amount: 35000, total_amount: 35000, interest_rate: 0.05, min_payment: 400 });
+      setDebtData(debtResults[0] || { name: 'Student Loan', current_amount: 20000, total_amount: 20000, interest_rate: 0.05, min_payment: 3540 });
     } catch (err) {
       console.warn('Balance fetch failed, using fallback:', err);
     }
@@ -40,112 +41,161 @@ const CommandCenter = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="flex flex-col items-center gap-4">
-          <Zap className="w-8 h-8 text-white/20 animate-pulse" />
-          <div className="text-[10px] uppercase tracking-[0.3em] text-white/20 mono">Authenticating...</div>
-        </div>
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0C18]">
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <Zap size={48} className="text-[#39FF14]" />
+        </motion.div>
       </div>
     );
   }
 
   const triggerUpdate = () => setUpdateTick(prev => prev + 1);
 
-  const isSimulatorSafe = checkingBalance > (discoverBalance + 1000);
-  const simulatorBg = activeTab === 'simulator' 
-    ? (isSimulatorSafe ? 'bg-emerald-950/20' : 'bg-rose-950/20') 
-    : 'bg-black';
-
   return (
-    <div className={`command-center min-h-screen transition-colors duration-1000 ${simulatorBg}`}>
-      {/* Navigation Bar */}
-      <nav className="nav-bar">
-        <div className="flex items-center gap-2 absolute left-4 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-          <div className="bolt-container" style={{ width: '32px', height: '32px' }}>
-            <svg viewBox="0 0 24 24" className="w-5 h-5 bolt-metallic">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
+    <div className="command-center max-w-[1200px] mx-auto pt-12">
+      {/* Top Left Persistent Logo */}
+      <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
+        <div className="w-12 h-12 rounded-full bg-[#13172a] flex items-center justify-center shadow-[0_0_20px_rgba(57,255,20,0.2)]">
+          <Zap size={24} className="money-green-pulse" />
+        </div>
+        <div className="hidden md:block">
+          <div className="text-sm font-black tracking-tighter text-white">PULSE_ENCLAVE</div>
+          <div className="text-[8px] text-slate-500 uppercase tracking-[0.3em] font-bold">Secure_Terminal_v3.2</div>
+        </div>
+      </div>
+
+      {/* Main Navigation Bar */}
+      <nav className="flex justify-center gap-12 mb-16 relative">
+        {['dashboard', 'loans', 'simulator', 'ledger'].map((tab) => (
+          <div 
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`cursor-pointer text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${
+              activeTab === tab ? 'text-white' : 'text-slate-600 hover:text-slate-400'
+            }`}
+          >
+            {tab}
+            {activeTab === tab && (
+              <motion.div 
+                layoutId="nav-line"
+                className="absolute -bottom-4 left-0 right-0 h-0.5 bg-[#39FF14] shadow-[0_0_10px_#39FF14]"
+              />
+            )}
           </div>
-          <span className="text-xs font-black tracking-tighter logo-metallic">PULSE</span>
-        </div>
-
-        <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>Dashboard</div>
-        <div className={`nav-item ${activeTab === 'loans' ? 'active' : ''}`} onClick={() => setActiveTab('loans')}>Loans</div>
-        <div className={`nav-item ${activeTab === 'simulator' ? 'active' : ''}`} onClick={() => setActiveTab('simulator')}>Simulator</div>
-        <div className={`nav-item ${activeTab === 'ledger' ? 'active' : ''}`} onClick={() => setActiveTab('ledger')}>Ledger</div>
-
-        <div className="absolute right-4 text-[9px] text-muted mono uppercase tracking-widest hidden md:block">
-          ${checkingBalance.toLocaleString()} LQD
-        </div>
+        ))}
       </nav>
 
-      {/* Main Content Area */}
-      <main className="main-view animate-in fade-in slide-in-from-bottom-4 duration-1000">
-        {activeTab === 'dashboard' && (
-          <div className="flex flex-col gap-12">
-            <header className="text-center pt-8">
-              <h2 className="text-3xl font-black tracking-tighter mb-1 uppercase">Financial Heartbeat</h2>
-              <p className="text-[10px] text-muted uppercase tracking-[0.3em]">Projected 90-Day Liquidity Forecast</p>
-            </header>
-            
-            <Heartbeat forecastData={forecast} />
-            
-            <div className="max-w-md mx-auto w-full">
-              <AutomationModule onUpdate={triggerUpdate} />
-            </div>
-          </div>
-        )}
+      {/* Content Area with Framer Motion Transitions */}
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={activeTab}
+          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="pb-20"
+        >
+          {activeTab === 'dashboard' && (
+            <div className="flex flex-col gap-12">
+              <div className="text-center mb-4">
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">NETWORK_HEARTBEAT</h2>
+                <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">90_Day_Liquidity_Vector</div>
+              </div>
+              
+              <div className="glass-card">
+                <Heartbeat forecastData={forecast} color="#39FF14" />
+              </div>
 
-        {activeTab === 'loans' && (
-          <div className="flex flex-col gap-8 max-w-2xl mx-auto w-full pt-8">
-            <header>
-              <h2 className="text-3xl font-black tracking-tighter mb-1 uppercase text-center">Debt Elimination</h2>
-              <p className="text-[10px] text-muted uppercase tracking-[0.3em] text-center">Principal Trackers & Payoff Optimization</p>
-            </header>
-            
-            <KillSwitch debt={debtData} />
-            
-            <div className="glass-card">
-              <div className="card-header text-muted">Current Liabilities</div>
-              <div className="flex justify-between items-center py-4">
-                <div className="text-xl font-black text-white mono">DISCOVER_CARD</div>
-                <div className="text-xl font-black text-rose-500 mono">${discoverBalance.toLocaleString()}</div>
+              <div className="max-w-md mx-auto w-full">
+                <AutomationModule onUpdate={triggerUpdate} />
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === 'simulator' && (
-          <div className="flex flex-col gap-12 max-w-2xl mx-auto w-full pt-8">
-            <header className="text-center">
-              <h2 className="text-3xl font-black tracking-tighter mb-1 uppercase">Simulator</h2>
-              <p className="text-[10px] text-muted uppercase tracking-[0.3em]">Gatekeeper Spending Evaluation</p>
-            </header>
-            
-            <VerdictGatekeeper checkingBalance={checkingBalance} discoverBalance={discoverBalance} />
-            
-            <div className="glass-card p-8 border-dashed border-white/5">
-              <p className="text-xs text-muted leading-relaxed text-center italic">
-                The simulator evaluates proposed transactions against your current liquid assets and future debt obligations. 
-                The background color of the gatekeeper will shift based on the safety of the proposed spend.
-              </p>
+          {activeTab === 'loans' && (
+            <div className="flex flex-col gap-8 max-w-2xl mx-auto">
+              <div className="text-center mb-4">
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">LOAN_ERADICATION</h2>
+                <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Student_Loan_Principal_v01</div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="glass-card flex flex-col items-center justify-center text-center py-12">
+                  <div className="relative w-40 h-40 mb-6">
+                    <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="#f97316" strokeWidth="8" strokeDasharray="283" strokeDashoffset="220" strokeLinecap="round" />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <div className="text-xs font-black text-slate-500">22%</div>
+                      <div className="text-[8px] text-slate-600 uppercase font-bold">Paid</div>
+                    </div>
+                  </div>
+                  <div className="text-3xl font-black mono text-white">$20,000.00</div>
+                  <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-1">Remaining Principal</div>
+                </div>
+
+                <div className="flex flex-col gap-6">
+                  <div className="glass-card">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-3 rounded-xl bg-rose-500/10 text-rose-500"><Clock size={20} /></div>
+                      <div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Monthly Payment</div>
+                        <div className="text-2xl font-black mono text-white">$3,540.00</div>
+                      </div>
+                    </div>
+                    <div className="text-[9px] text-rose-400 font-bold uppercase tracking-wider">Non-Negotiable Fixed Cost</div>
+                  </div>
+
+                  <div className="glass-card">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-500"><Target size={20} /></div>
+                      <div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Time To Zero</div>
+                        <div className="text-2xl font-black mono text-white">6 Months</div>
+                      </div>
+                    </div>
+                    <div className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">Aggressive Payoff Vector</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === 'ledger' && (
-          <div className="flex flex-col gap-8 pt-8">
-            <header>
-              <h2 className="text-3xl font-black tracking-tighter mb-1 uppercase">Transaction Enclave</h2>
-              <p className="text-[10px] text-muted uppercase tracking-[0.3em]">Encrypted Local Ledger</p>
-            </header>
-            
-            <Ledger key={updateTick} />
-          </div>
-        )}
-      </main>
+          {activeTab === 'simulator' && (
+            <div className="max-w-2xl mx-auto flex flex-col gap-8">
+              <div className="text-center mb-4">
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">GATEKEEPER</h2>
+                <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Liquidity_Simulation_Module</div>
+              </div>
+              <VerdictGatekeeper checkingBalance={checkingBalance} discoverBalance={discoverBalance} monthlyPayment={3540} />
+            </div>
+          )}
+
+          {activeTab === 'ledger' && (
+            <div className="flex flex-col gap-8">
+              <div className="text-center mb-4">
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">ENCLAVE_LEDGER</h2>
+                <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Decentralized_Transaction_Feed</div>
+              </div>
+              <Ledger key={updateTick} />
+            </div>
+          )}
+        </motion.main>
+      </AnimatePresence>
+
+      {/* Floating Liquidity Indicator */}
+      <div className="fixed bottom-8 right-8 glass-card py-2 px-6 rounded-full flex items-center gap-4 border border-white/5">
+        <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Liquid Assets</div>
+        <div className="text-lg font-black mono text-[#39FF14]">${checkingBalance.toLocaleString()}</div>
+      </div>
     </div>
   );
 };
+
+export default CommandCenter;
 
 export default CommandCenter;

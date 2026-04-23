@@ -1,59 +1,109 @@
-import React from 'react';
-import { ShieldCheck, ShieldAlert, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldCheck, ShieldAlert, Zap, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const VerdictGatekeeper = ({ checkingBalance, discoverBalance }) => {
-  // Logic: "Acceptable" if checking balance covers discover debt and leaves a buffer
-  const isAcceptable = checkingBalance > (discoverBalance + 1000);
-  
+const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 3540 }) => {
+  const [proposedSpend, setProposedSpend] = useState('');
+  const [verdict, setVerdict] = useState(null);
+  const [isSimulating, setIsSimulating] = useState(false);
+
+  const handleSimulate = () => {
+    setIsSimulating(true);
+    setTimeout(() => {
+      const spend = parseFloat(proposedSpend) || 0;
+      // Logic: Safe if checking balance after spend can still cover the $3,540 payment + $1,000 buffer
+      const isSafe = (checkingBalance - spend) > (monthlyPayment + 1000);
+      setVerdict(isSafe ? 'SAFE' : 'DENIED');
+      setIsSimulating(false);
+    }, 800);
+  };
+
+  const isSafe = verdict === 'SAFE';
+  const isDenied = verdict === 'DENIED';
+
   return (
-    <div className={`glass-card border-2 transition-all duration-500 ${isAcceptable ? 'border-emerald-500/30' : 'border-rose-500/30'}`}>
-      <div className="card-header">
-        <span className="flex items-center gap-2"><Zap size={12} className="text-white/40" /> GATEKEEPER_SIMULATOR</span>
-        <span className={`font-black text-[9px] flex items-center gap-1 ${isAcceptable ? 'text-emerald-500' : 'text-rose-500'}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${isAcceptable ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span> 
-          {isAcceptable ? 'VERDICT_READY' : 'LIQUIDITY_WARNING'}
+    <motion.div 
+      layout
+      className={`glass-card transition-all duration-700 ${
+        isSafe ? 'bg-emerald-500/20' : isDenied ? 'bg-purple-900/40' : 'bg-white/5'
+      }`}
+    >
+      <div className="card-header border-b border-white/5 pb-4 mb-6">
+        <span className="flex items-center gap-2"><Zap size={14} className="money-green-pulse" /> SIMULATOR_GATEKEEPER_v3</span>
+        <span className={`font-black text-[10px] tracking-widest ${isSafe ? 'text-emerald-400' : isDenied ? 'text-purple-400' : 'text-slate-500'}`}>
+          {verdict ? `SYSTEM_VERDICT: ${verdict}` : 'AWAITING_INPUT...'}
         </span>
       </div>
 
-      <div className="flex items-center justify-between gap-6 py-2">
-        <div className="flex flex-col gap-1">
-          <div className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Simulated Purchase</div>
-          <div className="text-lg font-black text-white mono uppercase">New_MacBook_Pro</div>
-        </div>
-
-        <div className={`flex flex-col items-center justify-center p-4 rounded-xl border-b-4 transition-all duration-700 ${
-          isAcceptable 
-          ? 'bg-emerald-500/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.1)]' 
-          : 'bg-rose-500/10 border-rose-500/50 grayscale opacity-70'
-        }`}>
-          {isAcceptable ? (
-            <>
-              <ShieldCheck size={32} className="text-emerald-500 mb-2 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-              <div className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] logo-metallic">Acceptable</div>
-            </>
-          ) : (
-            <>
-              <ShieldAlert size={32} className="text-rose-500 mb-2" />
-              <div className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em]">Denied</div>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-2 gap-4">
-        <div>
-          <div className="text-[8px] text-slate-600 uppercase tracking-widest mb-1">Checking Ratio</div>
-          <div className={`text-xs font-bold mono ${isAcceptable ? 'text-emerald-500' : 'text-rose-400'}`}>
-            {(checkingBalance / 5000 * 100).toFixed(0)}%_HEALTH
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-3">
+          <label className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Proposed Purchase Amount</label>
+          <div className="flex gap-4">
+            <input 
+              type="number" 
+              placeholder="0.00"
+              value={proposedSpend}
+              onChange={(e) => setProposedSpend(e.target.value)}
+              className="bg-black/40 border-none rounded-xl px-6 py-4 text-2xl mono text-white w-full focus:ring-2 ring-blue-500/50 outline-none"
+            />
+            <button 
+              onClick={handleSimulate}
+              className="btn-glossy flex items-center gap-3 whitespace-nowrap"
+              disabled={isSimulating}
+            >
+              {isSimulating ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} />}
+              Simulate Spend
+            </button>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-[8px] text-slate-600 uppercase tracking-widest mb-1">Risk Factor</div>
-          <div className="text-xs font-bold mono text-slate-400">LOW_LEVEL_7</div>
+
+        <AnimatePresence mode="wait">
+          {verdict && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className={`flex items-center justify-between p-8 rounded-3xl border-b-8 ${
+                isSafe 
+                ? 'bg-emerald-500/10 border-emerald-500/50 shadow-[0_0_30px_rgba(57,255,20,0.2)]' 
+                : 'bg-purple-500/10 border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.2)]'
+              }`}
+            >
+              <div className="flex flex-col gap-1">
+                <div className="text-xs text-slate-400 uppercase tracking-widest font-bold">Liquidity Status</div>
+                <div className={`text-3xl font-black mono uppercase ${isSafe ? 'text-emerald-400' : 'text-purple-400'}`}>
+                  {isSafe ? 'Transaction_Approved' : 'Liquidity_Hazard'}
+                </div>
+              </div>
+
+              {isSafe ? (
+                <ShieldCheck size={48} className="text-emerald-400 drop-shadow-[0_0_12px_rgba(57,255,20,0.6)]" />
+              ) : (
+                <ShieldAlert size={48} className="text-purple-400 drop-shadow-[0_0_12px_rgba(168,85,247,0.6)]" />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="pt-6 border-t border-white/5 grid grid-cols-3 gap-6">
+          <div>
+            <div className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Fixed Liability</div>
+            <div className="text-sm font-bold mono text-rose-400">$3,540.00</div>
+          </div>
+          <div>
+            <div className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Safe Buffer</div>
+            <div className="text-sm font-bold mono text-emerald-400">$1,000.00</div>
+          </div>
+          <div className="text-right">
+            <div className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Risk Threshold</div>
+            <div className="text-sm font-bold mono text-slate-300">MEDIUM_4</div>
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
+
+export default VerdictGatekeeper;
 
 export default VerdictGatekeeper;
