@@ -127,7 +127,7 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
                       ? "Safe Allocation. Your projected liquidity comfortably covers all fixed costs, student loan minimums, and this purchase while maintaining a strict 1.5x buffer margin."
                       : isCaution
                       ? "Caution Required. This purchase dips into your safety buffer. Your projected income still covers absolute costs, but emergency reserves are temporarily compromised."
-                      : "Action Denied. This transaction creates an immediate liability hazard against your non-negotiable $3,540 student loan payoff vector."}
+                      : `Action Denied. This transaction creates an immediate liability hazard against your non-negotiable $${monthlyPayment.toLocaleString()} student loan payoff vector.`}
                   </p>
                 </div>
               </div>
