@@ -103,7 +103,4 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
     </motion.div>
   );
 };
-
-export default VerdictGatekeeper;
-
 export default VerdictGatekeeper;
