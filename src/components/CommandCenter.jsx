@@ -14,8 +14,13 @@ const CommandCenter = () => {
 
   useEffect(() => {
     const fetchDebt = async () => {
-      const results = await db.select().from(debts);
-      setDebtData(results[0]);
+      try {
+        const results = await db.select().from(debts);
+        setDebtData(results[0] || { name: 'Student Loan', current_amount: 35000, total_amount: 35000, interest_rate: 0.05, min_payment: 400 });
+      } catch (err) {
+        console.warn('Falling back to mock debt data:', err);
+        setDebtData({ name: 'Student Loan', current_amount: 35000, total_amount: 35000, interest_rate: 0.05, min_payment: 400 });
+      }
     };
     fetchDebt();
   }, []);
