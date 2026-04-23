@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #050506;
+  --bg-glass: rgba(18, 18, 20, 0.7);
+  --bg-tertiary: #1a1a1c;
+  --accent-bolt: #eab308;
+  --accent-pulse: #7c3aed;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-dim: #475569;
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(255, 255, 255, 0.2);
+  
+  --status-ok: #10b981;
+  --status-warning: #f59e0b;
+  --status-danger: #ef4444;
+
+  --metallic-silver: linear-gradient(135deg, #9ca3af 0%, #f3f4f6 50%, #d1d5db 100%);
+  --metallic-brushed: linear-gradient(135deg, #71717a 0%, #e4e4e7 25%, #71717a 50%, #e4e4e7 75%, #71717a 100%);
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(30, 30, 35, 0.5) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(20, 20, 25, 0.3) 0%, transparent 50%);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glassmorphism utility */
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.glass-card:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Command Center Layout - Analyst Dense */
+.command-center {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.main-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow: hidden;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+}
+
+/* Analyst Cards */
+.analyst-card {
+  @extend .glass-card;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+}
+
+/* Metallic Logo */
+.logo-metallic {
+  background: var(--metallic-brushed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 1px rgba(255,255,255,0.3));
+}
+
+.bolt-container {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+
+.bolt-metallic {
+  fill: url(#metallicGradient);
+  filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0% { filter: drop-shadow(0 0 2px rgba(255,255,255,0.1)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); transform: scale(1.05); }
+  100% { filter: drop-shadow(0 0 2px rgba(255,255,255,0.1)); transform: scale(1); }
+}
+
+.pulse-health-good {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.pulse-health-warning {
+  animation: pulse-glow 0.8s infinite ease-in-out;
+}
+
+.pulse-health-critical {
+  animation: pulse-glow 0.4s infinite ease-in-out;
+}
+
+/* Typography Overrides */
+h1, h2, h3 {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.stat-huge {
+  font-size: 2.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+
+/* Custom Table for Ledger */
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.ledger-table th {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-glass);
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.ledger-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+/* Progress Bar Metallic */
+.progress-container {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+  position: relative;
+}
+
+.progress-bar-metallic {
+  height: 100%;
+  background: var(--metallic-brushed);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-label {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
