@@ -1,40 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-primary: #08090A;
-  --bg-secondary: #0d0f11;
-  --bg-glass: rgba(13, 15, 17, 0.85);
+  --bg-primary: #0B0D11;
+  --bg-secondary: #0e1116;
+  --bg-glass: rgba(14, 17, 22, 0.7);
   --accent-bolt: #10B981;
-  --accent-cyan: #00F2FF;
-  --accent-nav: #00F2FF;
-  --text-primary: #FFFFFF;
-  --text-secondary: #94a3b8;
+  --accent-cyan: #00E5FF;
+  --accent-gold: #D4AF37;
+  --accent-ruby: #880808;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
   --text-muted: #475569;
   
-  --btn-tactile: inset 2px 2px 5px rgba(0,0,0,0.5), inset -2px -2px 5px rgba(255,255,255,0.05);
-  --metallic-brushed: linear-gradient(180deg, #FFFFFF 0%, #cbd5e1 50%, #94a3b8 100%);
+  --glass-border: 0.5px solid rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(20px);
+  --inset-glass: inset 2px 2px 8px rgba(0, 0, 0, 0.5), 0.5px 0.5px 0px rgba(255, 255, 255, 0.05);
 
   font-family: 'Inter', sans-serif;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
 }
 
 body {
   margin: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  overflow: hidden; /* App-Locked: No background scrolling */
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .main-scroll-area {
   height: 100vh;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: 2.5rem 0;
 }
 
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
 }
 
 .sticky-nav {
@@ -328,61 +331,72 @@ h1, h2, h3 {
 .transition-colors { transition-property: background-color, border-color, color, fill, stroke; }
 .duration-1000 { transition-duration: 1000ms; }
 
-/* Pulse 4.0 Components */
-.fintech-input {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  width: 100%;
-  outline: none;
-  transition: all 0.4s;
-  padding: 0.5rem 0;
+/* Pulse 4.5 Components */
+.glass-card-satin {
+  background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: 32px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-.fintech-input:focus {
-  border-bottom-color: var(--accent-cyan);
-  box-shadow: 0 10px 15px -10px rgba(0, 242, 255, 0.3);
+.input-satin-inset {
+  background: #06080a; /* Darker than page */
+  box-shadow: var(--inset-glass);
+  border: none;
+  border-radius: 16px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 1rem 1.5rem;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.input-satin-inset:focus {
+  box-shadow: var(--inset-glass), 0 0 15px rgba(0, 229, 255, 0.1);
 }
 
 .technical-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.2em;
   color: var(--text-muted);
 }
 
-.btn-tactile {
-  background: var(--metallic-brushed);
-  border: none;
-  border-radius: 12px;
-  color: #000;
-  font-weight: 900;
+/* Breathing Pulse */
+@keyframes breathing {
+  0% { opacity: 0.4; transform: scale(0.95); filter: blur(4px); }
+  50% { opacity: 1; transform: scale(1.05); filter: blur(0px); }
+  100% { opacity: 0.4; transform: scale(0.95); filter: blur(4px); }
+}
+
+.emerald-breath {
+  color: var(--accent-bolt);
+  animation: breathing 4s ease-in-out infinite;
+}
+
+/* Tactile Softness */
+.btn-satin {
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+  color: var(--text-primary);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 1rem 2rem;
+  letter-spacing: 0.15em;
+  padding: 1rem 2.5rem;
+  border-radius: 20px;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  transition: all 0.3s;
 }
 
-.btn-tactile:active {
-  transform: scale(0.98);
-  box-shadow: var(--btn-tactile);
-}
-
-/* Glass Card 4.0 */
-.glass-card-4 {
-  background: var(--bg-glass);
-  border: 1px solid rgba(255,255,255,0.03);
-  border-radius: 28px;
-  padding: 2rem;
+.btn-satin:hover {
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-2px);
 }
 
 @keyframes shimmer {
