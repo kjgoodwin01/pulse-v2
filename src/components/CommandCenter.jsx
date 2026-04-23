@@ -55,35 +55,33 @@ const CommandCenter = () => {
   const triggerUpdate = () => setUpdateTick(prev => prev + 1);
 
   return (
-    <div className="command-center max-w-[1200px] mx-auto pt-12">
-      {/* Top Left Persistent Logo */}
-      <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-[#13172a] flex items-center justify-center shadow-[0_0_20px_rgba(57,255,20,0.2)]">
-          <Zap size={24} className="money-green-pulse" />
+    <div className="main-container py-12">
+      {/* Header with Alignment Fix */}
+      <header className="flex justify-between items-center mb-16">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-[#13172a] flex items-center justify-center border border-white/5 shadow-[0_0_20px_rgba(57,255,20,0.2)]">
+            <Zap size={24} className="money-green-pulse" />
+          </div>
+          <div>
+            <div className="text-xl font-black tracking-tighter text-white">PULSE</div>
+            <div className="text-[8px] text-slate-500 uppercase tracking-[0.3em] font-bold">Secure_Terminal_v3.2</div>
+          </div>
         </div>
-        <div className="hidden md:block">
-          <div className="text-sm font-black tracking-tighter text-white">PULSE_ENCLAVE</div>
-          <div className="text-[8px] text-slate-500 uppercase tracking-[0.3em] font-bold">Secure_Terminal_v3.2</div>
-        </div>
-      </div>
 
-      {/* Main Navigation Bar */}
-      <nav className="flex justify-center gap-12 mb-16 relative">
+        <div className="text-[11px] font-black mono text-slate-500 uppercase tracking-widest">
+          ${checkingBalance.toLocaleString()} LQD
+        </div>
+      </header>
+
+      {/* Navigation Bar - Restored Style */}
+      <nav className="nav-bar mb-16">
         {['dashboard', 'loans', 'simulator', 'ledger'].map((tab) => (
           <div 
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`cursor-pointer text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${
-              activeTab === tab ? 'text-white' : 'text-slate-600 hover:text-slate-400'
-            }`}
+            className={`nav-item ${activeTab === tab ? 'active' : ''}`}
           >
             {tab}
-            {activeTab === tab && (
-              <motion.div 
-                layoutId="nav-line"
-                className="absolute -bottom-4 left-0 right-0 h-0.5 bg-[#39FF14] shadow-[0_0_10px_#39FF14]"
-              />
-            )}
           </div>
         ))}
       </nav>
@@ -92,16 +90,16 @@ const CommandCenter = () => {
       <AnimatePresence mode="wait">
         <motion.main
           key={activeTab}
-          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
           className="pb-20"
         >
           {activeTab === 'dashboard' && (
-            <div className="flex flex-col gap-[2rem]">
+            <div className="flex flex-col gap-12">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Heartbeat</h2>
+                <h2 className="text-4xl font-black tracking-tighter text-white mb-2 uppercase">Heartbeat</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">90_Day_Liquidity_Vector</div>
               </div>
               
@@ -116,13 +114,13 @@ const CommandCenter = () => {
           )}
 
           {activeTab === 'loans' && (
-            <div className="flex flex-col gap-[2rem] max-w-2xl mx-auto">
+            <div className="flex flex-col gap-8 max-w-2xl mx-auto">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Loans</h2>
+                <h2 className="text-4xl font-black tracking-tighter text-white mb-2 uppercase">Loans</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Student_Loan_Principal_v01</div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-[2rem]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="glass-card flex flex-col items-center justify-center text-center py-12">
                   <div className="relative w-40 h-40 mb-6">
                     <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
@@ -138,7 +136,7 @@ const CommandCenter = () => {
                   <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-1">Remaining Principal</div>
                 </div>
 
-                <div className="flex flex-col gap-[2rem]">
+                <div className="flex flex-col gap-8">
                   <div className="glass-card">
                     <div className="flex items-center gap-4 mb-4">
                       <div className="p-3 rounded-xl bg-orange-500/10 text-[#f97316]"><Clock size={20} /></div>
@@ -166,9 +164,9 @@ const CommandCenter = () => {
           )}
 
           {activeTab === 'simulator' && (
-            <div className="max-w-2xl mx-auto flex flex-col gap-[2rem]">
+            <div className="max-w-2xl mx-auto flex flex-col gap-8">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Simulator</h2>
+                <h2 className="text-4xl font-black tracking-tighter text-white mb-2 uppercase">Simulator</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Liquidity_Simulation_Module</div>
               </div>
               <VerdictGatekeeper checkingBalance={checkingBalance} discoverBalance={discoverBalance} monthlyPayment={3540} />
@@ -176,9 +174,9 @@ const CommandCenter = () => {
           )}
 
           {activeTab === 'ledger' && (
-            <div className="flex flex-col gap-[2rem] pt-8">
+            <div className="flex flex-col gap-8 pt-8">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Ledger</h2>
+                <h2 className="text-4xl font-black tracking-tighter text-white mb-2 uppercase">Ledger</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Decentralized_Transaction_Feed</div>
               </div>
               <Ledger key={updateTick} />
@@ -186,12 +184,6 @@ const CommandCenter = () => {
           )}
         </motion.main>
       </AnimatePresence>
-
-      {/* Floating Liquidity Indicator */}
-      <div className="fixed bottom-8 right-8 glass-card py-2 px-6 rounded-full flex items-center gap-4 border border-white/5">
-        <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Liquid Assets</div>
-        <div className="text-lg font-black mono text-[#39FF14]">${checkingBalance.toLocaleString()}</div>
-      </div>
     </div>
   );
 };
