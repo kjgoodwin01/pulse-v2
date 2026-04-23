@@ -1,42 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-primary: #0A0C18;
-  --bg-secondary: #13172a;
-  --bg-glass: rgba(19, 23, 42, 0.85);
-  --accent-bolt: #39FF14;
-  --accent-nav: #eab308;
-  --accent-blue: #00D1FF;
-  --text-primary: #ffffff;
+  --bg-primary: #08090A;
+  --bg-secondary: #0d0f11;
+  --bg-glass: rgba(13, 15, 17, 0.85);
+  --accent-bolt: #10B981;
+  --accent-cyan: #00F2FF;
+  --accent-nav: #00F2FF;
+  --text-primary: #FFFFFF;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #475569;
   
-  --metallic-chrome: linear-gradient(
-    180deg, 
-    #ffffff 0%, 
-    #cbd5e1 50%, 
-    #94a3b8 100%
-  );
+  --btn-tactile: inset 2px 2px 5px rgba(0,0,0,0.5), inset -2px -2px 5px rgba(255,255,255,0.05);
+  --metallic-brushed: linear-gradient(180deg, #FFFFFF 0%, #cbd5e1 50%, #94a3b8 100%);
 
   font-family: 'Inter', sans-serif;
   letter-spacing: 0.05em;
-  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-[data-theme='light'] {
-  --bg-primary: #F8FAFC;
-  --bg-secondary: #FFFFFF;
-  --bg-glass: rgba(255, 255, 255, 0.8);
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --accent-nav: #00D1FF;
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden; /* App-Locked: No background scrolling */
+}
+
+.main-scroll-area {
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
 }
 
 .sticky-nav {
@@ -110,22 +108,21 @@ body {
   filter: brightness(1.2);
 }
 
-/* Tabbed Navigation */
 .nav-bar {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 3rem;
-  padding: 1.5rem 0;
+  gap: 2.5rem;
+  padding: 1.25rem 0;
   position: relative;
   z-index: 50;
-  margin-top: 1rem;
 }
 
 .nav-item {
   color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.3em;
   cursor: pointer;
@@ -133,23 +130,24 @@ body {
   position: relative;
 }
 
-.nav-item:hover {
-  color: var(--text-secondary);
-}
-
 .nav-item.active {
-  color: #ffffff;
+  color: var(--accent-cyan);
 }
 
 .nav-item.active::after {
   content: '';
   position: absolute;
-  bottom: -0.8rem;
+  bottom: -0.6rem;
   left: 0;
   width: 100%;
   height: 2px;
-  background: var(--accent-nav);
-  box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+  background: var(--accent-cyan);
+  box-shadow: 0 0 15px var(--accent-cyan);
+}
+
+/* Tab Bar Mobile Safe Area */
+.tab-bar-container {
+  padding-bottom: 12px; /* iOS Gesture Bar Safe Area */
 }
 
 /* Command Center Layout - Single Page Focus */
@@ -330,47 +328,61 @@ h1, h2, h3 {
 .transition-colors { transition-property: background-color, border-color, color, fill, stroke; }
 .duration-1000 { transition-duration: 1000ms; }
 
-/* Settings Slide-over */
-.settings-menu {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 400px;
-  height: 100vh;
-  background: var(--bg-secondary);
-  border-left: 1px solid rgba(255,255,255,0.1);
-  box-shadow: -20px 0 50px rgba(0,0,0,0.5);
-  z-index: 200;
-  padding: 3rem 2rem;
-}
-
-.input-glass {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
-  color: var(--text-primary);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  width: 100%;
-  transition: all 0.3s;
-}
-
-.input-glass:focus {
-  outline: none;
-  border-color: var(--accent-blue);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.balance-input {
+/* Pulse 4.0 Components */
+.fintech-input {
   background: transparent;
   border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
   color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 2.5rem;
   font-weight: 900;
-  font-family: 'JetBrains Mono', monospace;
-  text-align: right;
-  width: 100px;
+  letter-spacing: -0.05em;
+  width: 100%;
   outline: none;
+  transition: all 0.4s;
+  padding: 0.5rem 0;
+}
+
+.fintech-input:focus {
+  border-bottom-color: var(--accent-cyan);
+  box-shadow: 0 10px 15px -10px rgba(0, 242, 255, 0.3);
+}
+
+.technical-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+}
+
+.btn-tactile {
+  background: var(--metallic-brushed);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.btn-tactile:active {
+  transform: scale(0.98);
+  box-shadow: var(--btn-tactile);
+}
+
+/* Glass Card 4.0 */
+.glass-card-4 {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 28px;
+  padding: 2rem;
 }
 
 @keyframes shimmer {
