@@ -5,12 +5,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
 :root {
-  /* Pulse 2026 Spatial UI & Aurora Tokens */
-  --base-obsidian: #020617; /* Slate 950 */
-  --aurora-1: #3b82f6; /* Blue 500 */
-  --aurora-2: #8b5cf6; /* Violet 500 */
-  --aurora-3: #10b981; /* Emerald 500 */
-  
+  /* Pulse 2026 Spatial UI & Base Tokens */
+  --base-obsidian: #1e293b; /* Matte Stone Blue (Slate 800) */
   --acrylic-base: rgba(255, 255, 255, 0.02);
   --acrylic-border: rgba(255, 255, 255, 0.05);
   --acrylic-highlight: rgba(255, 255, 255, 0.1);
@@ -51,32 +47,13 @@ body {
   color: var(--text-dim);
 }
 
-/* --- The Aurora Background Engine --- */
-.aurora-canvas {
+/* --- The Stone Canvas Background --- */
+.stone-canvas {
   position: fixed;
-  inset: -50%;
+  inset: 0;
   z-index: -1;
   background: var(--base-obsidian);
   pointer-events: none;
-  overflow: hidden;
-}
-
-.aurora-orb {
-  position: absolute;
-  filter: blur(100px) saturate(150%);
-  opacity: 0.4;
-  animation: aurora-drift 20s infinite alternate ease-in-out;
-  border-radius: 50%;
-}
-
-.aurora-orb-1 { width: 50vw; height: 50vw; background: var(--aurora-1); top: 10%; left: 10%; animation-delay: 0s; }
-.aurora-orb-2 { width: 60vw; height: 60vw; background: var(--aurora-2); top: 30%; right: 10%; animation-delay: -5s; }
-.aurora-orb-3 { width: 40vw; height: 40vw; background: var(--aurora-3); bottom: 10%; left: 30%; animation-delay: -10s; }
-
-@keyframes aurora-drift {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(10%, 10%) scale(1.1); }
-  100% { transform: translate(-10%, -10%) scale(0.9); }
 }
 
 /* --- Spatial UI Bento Grid --- */
