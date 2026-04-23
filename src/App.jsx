@@ -49,9 +49,14 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b]">
+    <>
+      <div className="aurora-canvas">
+        <div className="aurora-orb aurora-orb-1" />
+        <div className="aurora-orb aurora-orb-2" />
+        <div className="aurora-orb aurora-orb-3" />
+      </div>
       <CommandCenter />
-    </div>
+    </>
   );
 }
 

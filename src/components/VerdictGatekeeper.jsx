@@ -7,7 +7,7 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
   const [verdict, setVerdict] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
 
-  // Precision Engine 4.5
+  // Precision Engine 5.0
   const INFLOW = checkingBalance + (2 * 2363.99);
   const OUTFLOW = discoverBalance + fixedExpenses + monthlyPayment;
   const MARGIN = INFLOW - OUTFLOW;
@@ -26,7 +26,7 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
         setVerdict('DENIED');
       }
       setIsSimulating(false);
-    }, 800);
+    }, 1200); // Slightly longer for tension
   };
 
   const isSafe = verdict === 'SAFE';
@@ -34,61 +34,54 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
   const isDenied = verdict === 'DENIED';
 
   return (
-    <motion.div 
-      layout
-      className="glass-card-satin relative overflow-hidden"
-      style={{
-        boxShadow: isSafe 
-          ? '0 0 40px rgba(16, 185, 129, 0.05), inset 0 0 20px rgba(16, 185, 129, 0.02)' 
-          : isCaution 
-          ? '0 0 40px rgba(212, 175, 55, 0.05), inset 0 0 20px rgba(212, 175, 55, 0.02)'
-          : isDenied
-          ? '0 0 40px rgba(136, 8, 8, 0.05), inset 0 0 20px rgba(136, 8, 8, 0.02)'
-          : 'none'
-      }}
-    >
-      {/* Subtle Edge Glow Overlay */}
+    <div className="relative w-full">
+      {/* Dynamic Aura behind the content when verdict is reached */}
       <AnimatePresence>
         {verdict && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 pointer-events-none"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.15, scale: 1 }}
+            className="absolute inset-0 pointer-events-none rounded-full blur-[100px]"
             style={{
-              border: `1px solid ${isSafe ? 'rgba(16, 185, 129, 0.2)' : isCaution ? 'rgba(212, 175, 55, 0.2)' : 'rgba(136, 8, 8, 0.2)'}`,
-              borderRadius: '32px'
+              background: isSafe ? '#10B981' : isCaution ? '#f59e0b' : '#ef4444'
             }}
           />
         )}
       </AnimatePresence>
 
-      <div className="flex justify-between items-center mb-12">
-        <div className="flex items-center gap-3">
-          <Zap size={16} className="emerald-breath" />
-          <span className="technical-label text-slate-400">LIQUIDITY_GATEKEEPER_v4.5</span>
+      <div className="flex justify-between items-center mb-16 relative z-10">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white/[0.03] border border-white/10 rounded-2xl shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]">
+            <Zap size={20} className="text-white" />
+          </div>
+          <div>
+            <div className="text-2xl font-bold tracking-tight text-white mb-1">Gatekeeper</div>
+            <span className="technical-label opacity-40">SIMULATION_ENGINE_v26</span>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-12">
-        <div className="flex flex-col gap-4">
-          <label className="technical-label">Simulate_Purchase_Amount</label>
-          <div className="flex gap-4 items-center">
-            <div className="relative flex-1">
+      <div className="flex flex-col gap-12 relative z-10">
+        <div className="flex flex-col gap-6">
+          <label className="technical-label opacity-60">Proposed_Capital_Allocation</label>
+          <div className="flex gap-6 items-stretch">
+            <div className="input-container-acrylic flex-1 flex items-center">
+              <span className="text-2xl text-slate-500 font-bold mr-3">$</span>
               <input 
                 type="number" 
                 placeholder="0.00"
                 value={proposedSpend}
                 onChange={(e) => setProposedSpend(e.target.value)}
-                className="input-satin-inset w-full"
+                className="input-titanium w-full text-4xl font-bold mono bg-transparent outline-none"
               />
             </div>
             <button 
               onClick={handleSimulate}
-              className="btn-satin flex items-center gap-3"
+              className="px-10 rounded-[24px] bg-white/[0.05] border border-white/10 hover:bg-white/[0.1] text-white font-bold tracking-wide transition-all shadow-[0_8px_32px_rgba(0,0,0,0.3)] flex items-center gap-3"
               disabled={isSimulating}
             >
-              {isSimulating ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
-              Analyze
+              {isSimulating ? <Loader2 size={24} className="animate-spin text-white" /> : <ShieldCheck size={24} />}
+              ANALYZE
             </button>
           </div>
         </div>
@@ -96,53 +89,53 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
         <AnimatePresence>
           {verdict && (
             <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
+              initial={{ height: 0, opacity: 0, y: 20 }}
+              animate={{ height: 'auto', opacity: 1, y: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 120 }}
               className="overflow-hidden"
             >
-              <div className="pt-8 border-t border-white/5 flex flex-col gap-8">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="technical-label mb-2">Verdict_Analysis</div>
-                    <div className={`text-4xl font-light tracking-tight ${
-                      isSafe ? 'text-[#10B981]' : isCaution ? 'text-[#D4AF37]' : 'text-[#880808]'
-                    }`}>
-                      {isSafe ? 'Transaction_Approved' : isCaution ? 'Margin_Caution' : 'Liquidity_Denied'}
-                    </div>
+              <div className="pt-12 mt-4 border-t border-white/[0.05] flex flex-col gap-12">
+                <div>
+                  <div className="technical-label opacity-40 mb-3">System_Verdict</div>
+                  <div className={`text-6xl font-bold tracking-tighter ${
+                    isSafe ? 'text-[#10B981]' : isCaution ? 'text-[#f59e0b]' : 'text-[#ef4444]'
+                  }`}>
+                    {isSafe ? 'APPROVED' : isCaution ? 'CAUTION' : 'DENIED'}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-8">
-                  <div>
-                    <div className="technical-label mb-1">Monthly_Inflow</div>
-                    <div className="text-lg font-medium text-white">${INFLOW.toLocaleString()}</div>
+                  <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
+                    <div className="technical-label opacity-40 mb-2">Projected_Inflow</div>
+                    <div className="text-2xl font-bold mono text-white">${INFLOW.toLocaleString()}</div>
                   </div>
-                  <div>
-                    <div className="technical-label mb-1">Total_Liabilities</div>
-                    <div className="text-lg font-medium text-slate-300">${OUTFLOW.toLocaleString()}</div>
+                  <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
+                    <div className="technical-label opacity-40 mb-2">Total_Liabilities</div>
+                    <div className="text-2xl font-bold mono text-slate-400">${OUTFLOW.toLocaleString()}</div>
                   </div>
-                  <div>
-                    <div className="technical-label mb-1">Remaining_Margin</div>
-                    <div className={`text-lg font-medium ${MARGIN > 0 ? 'text-[#10B981]' : 'text-[#880808]'}`}>
+                  <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
+                    <div className="technical-label opacity-40 mb-2">Residue_Margin</div>
+                    <div className={`text-2xl font-bold mono ${MARGIN > 0 ? 'text-[#10B981]' : 'text-[#ef4444]'}`}>
                       ${MARGIN.toLocaleString()}
                     </div>
                   </div>
                 </div>
 
-                <p className="text-sm text-slate-400 leading-relaxed font-light">
-                  {isSafe 
-                    ? "Safe. Your projected liquidity covers all fixed costs, student loans, and this purchase while maintaining a professional 1.5x buffer."
-                    : isCaution
-                    ? "Caution. This purchase dips into your safety buffer. Your projected income still covers costs, but emergency reserves are thin."
-                    : "Denied. Transaction creates an immediate liability hazard against your non-negotiable $3,540 student loan payoff vector."}
-                </p>
+                <div className="p-6 rounded-[24px] bg-black/40 border border-white/5 shadow-[inset_0_2px_12px_rgba(0,0,0,0.5)]">
+                  <p className="text-base text-slate-300 leading-relaxed">
+                    {isSafe 
+                      ? "Safe Allocation. Your projected liquidity comfortably covers all fixed costs, student loan minimums, and this purchase while maintaining a strict 1.5x buffer margin."
+                      : isCaution
+                      ? "Caution Required. This purchase dips into your safety buffer. Your projected income still covers absolute costs, but emergency reserves are temporarily compromised."
+                      : "Action Denied. This transaction creates an immediate liability hazard against your non-negotiable $3,540 student loan payoff vector."}
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

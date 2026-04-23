@@ -8,43 +8,49 @@ const Heartbeat = ({ forecastData }) => {
         <AreaChart data={forecastData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="glowGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.03}/>
-              <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#f8fafc" stopOpacity={0.06}/>
+              <stop offset="95%" stopColor="#f8fafc" stopOpacity={0}/>
             </linearGradient>
+            <filter id="vectorGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.015)" />
+          <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(255,255,255,0.02)" />
           <XAxis 
             dataKey="displayDate" 
             axisLine={false} 
             tickLine={false} 
-            tick={{ fill: '#475569', fontSize: 9, family: 'Inter', fontWeight: 500 }}
+            tick={{ fill: '#475569', fontSize: 10, family: 'Plus Jakarta Sans', fontWeight: 600 }}
             interval={14}
+            dy={10}
           />
           <YAxis hide domain={['auto', 'auto']} />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: 'rgba(15, 23, 42, 0.9)', 
-              backdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255,255,255,0.03)',
+              backgroundColor: 'rgba(2, 6, 23, 0.8)', 
+              backdropFilter: 'blur(32px) saturate(200%)',
+              border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '24px',
-              fontSize: '11px',
-              fontFamily: 'Inter',
-              fontWeight: 500,
-              boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-              color: '#fff'
+              fontSize: '13px',
+              fontFamily: 'Plus Jakarta Sans',
+              fontWeight: 600,
+              boxShadow: '0 20px 40px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.1)',
+              color: '#f8fafc',
+              padding: '12px 20px'
             }}
-            itemStyle={{ color: '#F8FAFC' }}
-            labelStyle={{ color: '#475569', marginBottom: '4px', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-            cursor={{ stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1 }}
+            itemStyle={{ color: '#f8fafc', fontFamily: 'JetBrains Mono', fontWeight: 700 }}
+            labelStyle={{ color: '#94a3b8', marginBottom: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.15em' }}
+            cursor={{ stroke: 'rgba(255, 255, 255, 0.1)', strokeWidth: 2, strokeDasharray: '4 4' }}
           />
           <Area 
             type="monotone" 
             dataKey="balance" 
-            stroke="#F8FAFC" 
-            strokeWidth={1.5}
+            stroke="#f8fafc" 
+            strokeWidth={3}
             fill="url(#glowGradient)"
-            animationDuration={2500}
-            style={{ filter: 'drop-shadow(0 0 2px rgba(255, 255, 255, 0.2))' }}
+            animationDuration={2000}
+            style={{ filter: 'url(#vectorGlow)' }}
           />
         </AreaChart>
       </ResponsiveContainer>

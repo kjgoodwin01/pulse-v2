@@ -84,39 +84,30 @@ const AutomationModule = ({ onUpdate, onOcrResult }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="glass-card flex items-center justify-between gap-4 p-4 border-[#eab308]/20">
-        <div className="flex flex-col">
-          <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-1">Payday Trigger</div>
-          <div className={`text-xl font-black mono ${shimmer ? 'shimmer-text' : 'text-[#f8fafc]'}`}>
-            $2,363.99
-          </div>
+    <div className="flex flex-col h-full">
+      <div className="flex-1 flex flex-col justify-center p-8 border-b border-white/[0.05]">
+        <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-2">Payday Trigger</div>
+        <div className={`text-3xl font-bold mono ${shimmer ? 'shimmer-text' : 'text-[#f8fafc]'} mb-6`}>
+          $2,363.99
         </div>
         <button 
           onClick={handlePayday} 
-          className="btn-chrome flex items-center gap-2"
-          style={{ 
-            background: 'linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%)',
-            color: '#000',
-            fontWeight: '900',
-            border: 'none',
-            boxShadow: '0 0 15px rgba(255,255,255,0.2)'
-          }}
+          className="btn-slate-minimal flex items-center justify-center gap-2 w-full bg-white/[0.05] border-white/10 hover:bg-white/[0.1]"
         >
-          <DollarSign size={14} />
+          <DollarSign size={16} />
           Post Paycheck
         </button>
       </div>
 
-      <div className="glass-card p-4 flex flex-col gap-3">
+      <div className="flex-1 p-8 flex flex-col justify-center gap-4 border-b border-white/[0.05]">
         <div className="flex justify-between items-center">
-          <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Discover OCR Scanner</div>
+          <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">OCR Scanner</div>
           <button 
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 text-[10px] font-black text-[#3b82f6] uppercase tracking-wider"
+            className="flex items-center gap-2 text-[10px] font-bold text-[#3b82f6] uppercase tracking-wider hover:text-white transition-colors"
           >
             {isScanning ? <Loader2 size={12} className="animate-spin" /> : <Camera size={12} />}
-            {isScanning ? 'Scanning...' : 'Snap Receipt'}
+            {isScanning ? 'Scanning' : 'Snap'}
           </button>
         </div>
         
@@ -129,23 +120,23 @@ const AutomationModule = ({ onUpdate, onOcrResult }) => {
         />
 
         {isScanning && (
-          <div className="scanner-container h-24 flex items-center justify-center">
+          <div className="scanner-container h-16 flex items-center justify-center">
             <div className="scan-line" />
-            <div className="text-[10px] text-slate-500 mono animate-pulse">ANALYZING_DATA_STREAM...</div>
+            <div className="text-[10px] text-slate-500 mono animate-pulse">ANALYZING...</div>
           </div>
         )}
       </div>
 
-      <div className="glass-card p-4 flex items-center gap-3">
+      <div className="p-8 flex items-center gap-4">
         <input
           type="number"
-          placeholder="RESET_CHECKING_BALANCE"
+          placeholder="RESET_CHECKING"
           value={manualSync}
           onChange={(e) => setManualSync(e.target.value)}
-          className="bg-black/40 border border-white/10 rounded px-3 py-2 text-xs mono text-white w-full focus:border-[#3b82f6] outline-none"
+          className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm mono text-white w-full focus:border-[#3b82f6] outline-none"
         />
-        <button onClick={handleManualSync} className="p-2 bg-white/5 hover:bg-white/10 rounded transition-colors text-slate-400">
-          <RefreshCw size={14} />
+        <button onClick={handleManualSync} className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors text-slate-400">
+          <RefreshCw size={16} />
         </button>
       </div>
     </div>

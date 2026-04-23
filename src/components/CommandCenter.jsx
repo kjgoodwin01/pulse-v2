@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Zap, 
-  Clock, 
-  Target, 
-  Settings,
-  CreditCard,
-  Wallet,
-  Loader2
-} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { db } from '../db';
-import { fixed_expenses, settings } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { Zap, Settings, Clock, Target } from 'lucide-react';
 import Heartbeat from './Heartbeat';
-import AutomationModule from './AutomationModule';
 import Ledger from './Ledger';
+import AutomationModule from './AutomationModule';
 import VerdictGatekeeper from './VerdictGatekeeper';
 import SettingsMenu from './SettingsMenu';
+import { db } from '../db';
+import { settings, fixed_expenses } from '../db/schema';
 
 const CommandCenter = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -28,7 +19,7 @@ const CommandCenter = () => {
   const [fixedExpensesTotal, setFixedExpensesTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Precision Engine Logic (Preserved)
+  // Precision Engine
   const INFLOW = checkingBalance + (2 * 2363.99);
   const OUTFLOW = discoverBalance + fixedExpensesTotal + 3540;
   const MARGIN = INFLOW - OUTFLOW;
@@ -92,31 +83,32 @@ const CommandCenter = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#0F172A]">
+      <div className="flex items-center justify-center min-h-screen">
         <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity }}>
-          <Zap size={48} className="text-[#A7F3D0]" />
+          <Zap size={48} className="text-[#3b82f6]" />
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="main-scroll-area">
-      <div className="main-container">
-        {/* Header 5.0 Liquid Slate */}
-        <header className="flex justify-between items-end mb-20">
+    <div className="main-scroll-area relative">
+      <div className="bento-container">
+        
+        {/* Header - Spans full grid width */}
+        <header className="flex justify-between items-end mb-16">
           <div className="flex items-center gap-6">
-            <Zap size={36} className="mint-breath" />
+            <Zap size={36} className="text-white" />
             <div>
-              <div className="text-3xl font-light tracking-tight text-white">Pulse</div>
-              <div className="technical-label opacity-60">SYSTEM_MANIFEST_v5.0</div>
+              <div className="text-3xl font-bold tracking-tight text-white mb-1">Pulse</div>
+              <div className="technical-label opacity-60">SPATIAL_OS_v26</div>
             </div>
           </div>
 
           <div className="flex items-center gap-12">
-            <div className="flex items-center gap-8">
-              <div className="flex flex-col gap-3">
-                <label className="technical-label text-right opacity-50">Checking_Vector</label>
+            <div className="flex items-center gap-6">
+              <div className="input-container-acrylic flex flex-col gap-2">
+                <label className="technical-label opacity-50">Checking</label>
                 <input 
                   type="number" 
                   value={checkingBalance}
@@ -125,11 +117,11 @@ const CommandCenter = () => {
                     setCheckingBalance(val);
                     saveSetting('current_checking_balance', val.toString());
                   }}
-                  className="input-silk-inset w-36 text-right"
+                  className="input-titanium w-32 text-xl font-bold"
                 />
               </div>
-              <div className="flex flex-col gap-3">
-                <label className="technical-label text-right opacity-50">Discover_Liability</label>
+              <div className="input-container-acrylic flex flex-col gap-2">
+                <label className="technical-label opacity-50">Discover</label>
                 <input 
                   type="number" 
                   value={discoverBalance}
@@ -138,48 +130,37 @@ const CommandCenter = () => {
                     setDiscoverBalance(val);
                     saveSetting('current_discover_balance', val.toString());
                   }}
-                  className="input-silk-inset w-36 text-right"
+                  className="input-titanium w-32 text-xl font-bold"
                 />
               </div>
             </div>
 
             <button 
               onClick={() => setIsSettingsOpen(true)}
-              className="p-4 rounded-[24px] bg-white/[0.02] border border-white/5 text-slate-500 hover:text-white hover:bg-white/[0.05] transition-all"
+              className="p-5 rounded-full bg-white/[0.03] border border-white/5 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
             >
-              <Settings size={24} />
+              <Settings size={22} />
             </button>
           </div>
         </header>
 
-        {/* Liquid Tab Navigation */}
-        <div className="sticky top-0 z-[100] bg-[#0F172A]/80 backdrop-blur-2xl mb-20 border-b border-white/[0.03]">
-          <nav className="nav-bar">
-            {['dashboard', 'loans', 'simulator', 'ledger'].map((tab) => (
-              <div key={tab} onClick={() => setActiveTab(tab)} className={`nav-item ${activeTab === tab ? 'active' : ''}`}>
-                {tab}
-              </div>
-            ))}
-          </nav>
-        </div>
-
-        {/* Content Overhaul */}
+        {/* Bento Content */}
         <AnimatePresence mode="wait">
           <motion.main
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            className="flex flex-col gap-12 pb-40"
+            initial={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, scale: 1.02, filter: 'blur(8px)' }}
+            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+            className="w-full"
           >
             {activeTab === 'dashboard' && (
-              <>
-                <div className="glass-card-slate">
-                  <div className="technical-label mb-12 opacity-40">Network_Liquidity_Trajector</div>
+              <div className="bento-grid">
+                <div className="acrylic-card col-span-8 flex flex-col justify-between">
+                  <div className="technical-label opacity-40 mb-12">Network_Liquidity</div>
                   <Heartbeat forecastData={forecast} />
                 </div>
-                <div className="max-w-md mx-auto w-full">
+                <div className="acrylic-card col-span-4 p-0">
                   <AutomationModule onUpdate={triggerUpdate} onOcrResult={(amt) => {
                     setDiscoverBalance(prev => {
                       const next = prev + amt;
@@ -188,39 +169,39 @@ const CommandCenter = () => {
                     });
                   }} />
                 </div>
-              </>
+              </div>
             )}
 
             {activeTab === 'loans' && (
-              <div className="grid grid-cols-2 gap-12 max-w-5xl mx-auto w-full">
-                <div className="glass-card-slate flex flex-col items-center py-24">
-                  <div className="relative w-56 h-56 mb-12">
+              <div className="bento-grid">
+                <div className="acrylic-card col-span-6 flex flex-col items-center justify-center py-24 relative">
+                  <div className="absolute top-10 left-10 technical-label opacity-40">Principal_Residue</div>
+                  <div className="relative w-56 h-56 mb-12 mt-8">
                     <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
-                      <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.01)" strokeWidth="3" />
-                      <circle cx="50" cy="50" r="47" fill="none" stroke="var(--accent-secondary)" strokeWidth="3" strokeDasharray="295" strokeDashoffset="230" strokeLinecap="round" />
+                      <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="4" />
+                      <circle cx="50" cy="50" r="47" fill="none" stroke="#8b5cf6" strokeWidth="4" strokeDasharray="295" strokeDashoffset="230" strokeLinecap="round" />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="text-4xl font-light text-white">22%</div>
-                      <div className="technical-label opacity-40">PAID</div>
+                      <div className="text-4xl font-bold mono text-white drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]">22%</div>
+                      <div className="technical-label opacity-40 mt-1">PAID</div>
                     </div>
                   </div>
-                  <div className="text-5xl font-light text-white">$20,000.00</div>
-                  <div className="technical-label mt-4 opacity-40">Principal_Residue</div>
+                  <div className="text-5xl font-bold mono text-white">$20,000.00</div>
                 </div>
 
-                <div className="flex flex-col gap-12">
-                  <div className="glass-card-slate flex items-center gap-10">
-                    <div className="p-5 rounded-[28px] bg-white/[0.02] text-slate-400"><Clock size={28} /></div>
+                <div className="col-span-6 grid grid-rows-2 gap-6">
+                  <div className="acrylic-card flex items-center gap-10">
+                    <div className="p-6 rounded-[32px] bg-white/[0.03] text-slate-400 border border-white/5 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]"><Clock size={32} /></div>
                     <div>
-                      <div className="technical-label opacity-40">Fixed_Liability</div>
-                      <div className="text-3xl font-light text-white">$3,540.00</div>
+                      <div className="technical-label opacity-40 mb-2">Fixed_Liability</div>
+                      <div className="text-4xl font-bold mono text-white">$3,540.00</div>
                     </div>
                   </div>
-                  <div className="glass-card-slate flex items-center gap-10">
-                    <div className="p-5 rounded-[28px] bg-white/[0.02] text-[#A7F3D0]"><Target size={28} /></div>
+                  <div className="acrylic-card flex items-center gap-10">
+                    <div className="p-6 rounded-[32px] bg-white/[0.03] text-[#10b981] border border-white/5 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]"><Target size={32} /></div>
                     <div>
-                      <div className="technical-label opacity-40">Elimination_Horizon</div>
-                      <div className="text-3xl font-light text-white">6 Months</div>
+                      <div className="technical-label opacity-40 mb-2">Elimination_Horizon</div>
+                      <div className="text-4xl font-bold text-white">6 Months</div>
                     </div>
                   </div>
                 </div>
@@ -228,7 +209,7 @@ const CommandCenter = () => {
             )}
 
             {activeTab === 'simulator' && (
-              <div className="max-w-4xl mx-auto w-full">
+              <div className="acrylic-card max-w-4xl mx-auto w-full">
                 <VerdictGatekeeper 
                   checkingBalance={checkingBalance} 
                   discoverBalance={discoverBalance} 
@@ -238,13 +219,35 @@ const CommandCenter = () => {
             )}
 
             {activeTab === 'ledger' && (
-              <div className="glass-card-slate">
+              <div className="acrylic-card max-w-5xl mx-auto">
                 <div className="technical-label mb-12 opacity-40">Enclave_Transaction_Log</div>
                 <Ledger key={updateTick} />
               </div>
             )}
           </motion.main>
         </AnimatePresence>
+      </div>
+
+      {/* Dynamic Dock */}
+      <div className="dynamic-dock-wrapper">
+        <div className="dynamic-dock">
+          {['dashboard', 'loans', 'simulator', 'ledger'].map((tab) => (
+            <div 
+              key={tab} 
+              onClick={() => setActiveTab(tab)} 
+              className={`dock-item ${activeTab === tab ? 'active' : ''}`}
+            >
+              {activeTab === tab && (
+                <motion.div 
+                  layoutId="dock-pill"
+                  className="dock-active-pill"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10 capitalize">{tab}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <SettingsMenu 
