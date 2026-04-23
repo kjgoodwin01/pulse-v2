@@ -21,7 +21,10 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
       setSimulatedSpend(spend);
       const net = MARGIN - spend;
       
-      if (net > (fixedExpenses * 1.5)) {
+      const totalFixedObligations = fixedExpenses + monthlyPayment;
+      const safetyBuffer = totalFixedObligations * 1.5;
+
+      if (net > safetyBuffer) {
         setVerdict('SAFE');
       } else if (net > 0) {
         setVerdict('CAUTION');
