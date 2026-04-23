@@ -92,9 +92,9 @@ const CommandCenter = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#0B0D11]">
+      <div className="flex items-center justify-center min-h-screen bg-[#0F172A]">
         <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity }}>
-          <Zap size={48} className="text-[#10B981]" />
+          <Zap size={48} className="text-[#A7F3D0]" />
         </motion.div>
       </div>
     );
@@ -103,20 +103,20 @@ const CommandCenter = () => {
   return (
     <div className="main-scroll-area">
       <div className="main-container">
-        {/* Header 4.5 Satin */}
-        <header className="flex justify-between items-end mb-16">
+        {/* Header 5.0 Liquid Slate */}
+        <header className="flex justify-between items-end mb-20">
           <div className="flex items-center gap-6">
-            <Zap size={32} className="emerald-breath" />
+            <Zap size={36} className="mint-breath" />
             <div>
-              <div className="text-2xl font-light tracking-tight text-white uppercase">Pulse</div>
-              <div className="technical-label">SECURE_TERMINAL_v4.5</div>
+              <div className="text-3xl font-light tracking-tight text-white">Pulse</div>
+              <div className="technical-label opacity-60">SYSTEM_MANIFEST_v5.0</div>
             </div>
           </div>
 
-          <div className="flex items-center gap-10">
+          <div className="flex items-center gap-12">
             <div className="flex items-center gap-8">
-              <div className="flex flex-col gap-2">
-                <label className="technical-label text-right">Checking</label>
+              <div className="flex flex-col gap-3">
+                <label className="technical-label text-right opacity-50">Checking_Vector</label>
                 <input 
                   type="number" 
                   value={checkingBalance}
@@ -125,11 +125,11 @@ const CommandCenter = () => {
                     setCheckingBalance(val);
                     saveSetting('current_checking_balance', val.toString());
                   }}
-                  className="input-satin-inset w-32 text-right"
+                  className="input-silk-inset w-36 text-right"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="technical-label text-right">Discover</label>
+              <div className="flex flex-col gap-3">
+                <label className="technical-label text-right opacity-50">Discover_Liability</label>
                 <input 
                   type="number" 
                   value={discoverBalance}
@@ -138,22 +138,22 @@ const CommandCenter = () => {
                     setDiscoverBalance(val);
                     saveSetting('current_discover_balance', val.toString());
                   }}
-                  className="input-satin-inset w-32 text-right"
+                  className="input-silk-inset w-36 text-right"
                 />
               </div>
             </div>
 
             <button 
               onClick={() => setIsSettingsOpen(true)}
-              className="p-3 rounded-2xl bg-white/5 border border-white/5 text-slate-500 hover:text-white transition-all mb-1"
+              className="p-4 rounded-[24px] bg-white/[0.02] border border-white/5 text-slate-500 hover:text-white hover:bg-white/[0.05] transition-all"
             >
-              <Settings size={22} />
+              <Settings size={24} />
             </button>
           </div>
         </header>
 
-        {/* Satin Tab Navigation */}
-        <div className="sticky top-0 z-[100] bg-[#0B0D11]/80 backdrop-blur-2xl mb-16 border-b border-white/5">
+        {/* Liquid Tab Navigation */}
+        <div className="sticky top-0 z-[100] bg-[#0F172A]/80 backdrop-blur-2xl mb-20 border-b border-white/[0.03]">
           <nav className="nav-bar">
             {['dashboard', 'loans', 'simulator', 'ledger'].map((tab) => (
               <div key={tab} onClick={() => setActiveTab(tab)} className={`nav-item ${activeTab === tab ? 'active' : ''}`}>
@@ -170,13 +170,13 @@ const CommandCenter = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col gap-10 pb-32"
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="flex flex-col gap-12 pb-40"
           >
             {activeTab === 'dashboard' && (
               <>
-                <div className="glass-card-satin">
-                  <div className="technical-label mb-10 text-slate-500">Liquidity_Heartbeat_Projection</div>
+                <div className="glass-card-slate">
+                  <div className="technical-label mb-12 opacity-40">Network_Liquidity_Trajector</div>
                   <Heartbeat forecastData={forecast} />
                 </div>
                 <div className="max-w-md mx-auto w-full">
@@ -192,35 +192,35 @@ const CommandCenter = () => {
             )}
 
             {activeTab === 'loans' && (
-              <div className="grid grid-cols-2 gap-10 max-w-4xl mx-auto w-full">
-                <div className="glass-card-satin flex flex-col items-center py-20">
-                  <div className="relative w-48 h-48 mb-10">
+              <div className="grid grid-cols-2 gap-12 max-w-5xl mx-auto w-full">
+                <div className="glass-card-slate flex flex-col items-center py-24">
+                  <div className="relative w-56 h-56 mb-12">
                     <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
-                      <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="4" />
-                      <circle cx="50" cy="50" r="46" fill="none" stroke="#00E5FF" strokeWidth="4" strokeDasharray="289" strokeDashoffset="220" strokeLinecap="round" />
+                      <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.01)" strokeWidth="3" />
+                      <circle cx="50" cy="50" r="47" fill="none" stroke="var(--accent-secondary)" strokeWidth="3" strokeDasharray="295" strokeDashoffset="230" strokeLinecap="round" />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="text-3xl font-light text-white">22%</div>
-                      <div className="technical-label">PAID</div>
+                      <div className="text-4xl font-light text-white">22%</div>
+                      <div className="technical-label opacity-40">PAID</div>
                     </div>
                   </div>
-                  <div className="text-4xl font-light text-white">$20,000.00</div>
-                  <div className="technical-label mt-2">Student_Loan_Principal</div>
+                  <div className="text-5xl font-light text-white">$20,000.00</div>
+                  <div className="technical-label mt-4 opacity-40">Principal_Residue</div>
                 </div>
 
-                <div className="flex flex-col gap-10">
-                  <div className="glass-card-satin flex items-center gap-8">
-                    <div className="p-4 rounded-3xl bg-white/5 text-[#00E5FF]"><Clock size={24} /></div>
+                <div className="flex flex-col gap-12">
+                  <div className="glass-card-slate flex items-center gap-10">
+                    <div className="p-5 rounded-[28px] bg-white/[0.02] text-slate-400"><Clock size={28} /></div>
                     <div>
-                      <div className="technical-label">Monthly_Liability</div>
-                      <div className="text-2xl font-light text-white">$3,540.00</div>
+                      <div className="technical-label opacity-40">Fixed_Liability</div>
+                      <div className="text-3xl font-light text-white">$3,540.00</div>
                     </div>
                   </div>
-                  <div className="glass-card-satin flex items-center gap-8">
-                    <div className="p-4 rounded-3xl bg-white/5 text-[#10B981]"><Target size={24} /></div>
+                  <div className="glass-card-slate flex items-center gap-10">
+                    <div className="p-5 rounded-[28px] bg-white/[0.02] text-[#A7F3D0]"><Target size={28} /></div>
                     <div>
-                      <div className="technical-label">Payoff_Vector</div>
-                      <div className="text-2xl font-light text-white">6 Months</div>
+                      <div className="technical-label opacity-40">Elimination_Horizon</div>
+                      <div className="text-3xl font-light text-white">6 Months</div>
                     </div>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ const CommandCenter = () => {
             )}
 
             {activeTab === 'simulator' && (
-              <div className="max-w-3xl mx-auto w-full">
+              <div className="max-w-4xl mx-auto w-full">
                 <VerdictGatekeeper 
                   checkingBalance={checkingBalance} 
                   discoverBalance={discoverBalance} 
@@ -238,8 +238,8 @@ const CommandCenter = () => {
             )}
 
             {activeTab === 'ledger' && (
-              <div className="glass-card-satin">
-                <div className="technical-label mb-10 text-slate-500">Transaction_Enclave_History</div>
+              <div className="glass-card-slate">
+                <div className="technical-label mb-12 opacity-40">Enclave_Transaction_Log</div>
                 <Ledger key={updateTick} />
               </div>
             )}

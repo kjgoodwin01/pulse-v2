@@ -1,23 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-primary: #0B0D11;
-  --bg-secondary: #0e1116;
-  --bg-glass: rgba(14, 17, 22, 0.7);
-  --accent-bolt: #10B981;
-  --accent-cyan: #00E5FF;
-  --accent-gold: #D4AF37;
-  --accent-ruby: #880808;
+  --bg-primary: #0F172A; /* Warmer Midnight Slate */
+  --bg-secondary: #0a0f1d;
+  --bg-glass: rgba(0, 0, 0, 0.25);
+  --accent-bolt: #A7F3D0; /* Soft Mint */
+  --accent-main: #E2E8F0; /* Soft Pearl/Silver */
+  --accent-secondary: #C7D2FE; /* Muted Lavender */
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
   --text-muted: #475569;
   
-  --glass-border: 0.5px solid rgba(255, 255, 255, 0.08);
-  --glass-blur: blur(20px);
-  --inset-glass: inset 2px 2px 8px rgba(0, 0, 0, 0.5), 0.5px 0.5px 0px rgba(255, 255, 255, 0.05);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.03);
+  --glass-blur: blur(24px);
+  --inset-deep: inset 4px 4px 12px rgba(0, 0, 0, 0.4);
 
   font-family: 'Inter', sans-serif;
-  letter-spacing: 0.03em;
+  letter-spacing: -0.01em;
 }
 
 body {
@@ -31,13 +30,13 @@ body {
 .main-scroll-area {
   height: 100vh;
   overflow-y: auto;
-  padding: 2.5rem 0;
+  padding: 3rem 0;
 }
 
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
 }
 
 .sticky-nav {
@@ -331,72 +330,72 @@ h1, h2, h3 {
 .transition-colors { transition-property: background-color, border-color, color, fill, stroke; }
 .duration-1000 { transition-duration: 1000ms; }
 
-/* Pulse 4.5 Components */
-.glass-card-satin {
+/* Pulse 5.0 Liquid Slate */
+.glass-card-slate {
   background: var(--bg-glass);
   backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
-  border-radius: 32px;
-  padding: 2.5rem;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  border-radius: 40px;
+  padding: 3rem;
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5);
 }
 
-.input-satin-inset {
-  background: #06080a; /* Darker than page */
-  box-shadow: var(--inset-glass);
+.input-silk-inset {
+  background: rgba(0,0,0,0.3); /* Obsidian Tint */
+  box-shadow: var(--inset-deep);
   border: none;
-  border-radius: 16px;
+  border-radius: 20px;
   color: var(--text-primary);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.25rem;
-  font-weight: 700;
-  padding: 1rem 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 1.25rem 1.75rem;
   outline: none;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.input-satin-inset:focus {
-  box-shadow: var(--inset-glass), 0 0 15px rgba(0, 229, 255, 0.1);
+.input-silk-inset:focus {
+  box-shadow: var(--inset-deep), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  background: rgba(0,0,0,0.4);
 }
 
 .technical-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 9px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   color: var(--text-muted);
 }
 
-/* Breathing Pulse */
-@keyframes breathing {
-  0% { opacity: 0.4; transform: scale(0.95); filter: blur(4px); }
-  50% { opacity: 1; transform: scale(1.05); filter: blur(0px); }
-  100% { opacity: 0.4; transform: scale(0.95); filter: blur(4px); }
+/* Breathing Silk */
+@keyframes breathing-silk {
+  0% { opacity: 0.5; filter: blur(2px); }
+  50% { opacity: 1; filter: blur(0px); }
+  100% { opacity: 0.5; filter: blur(2px); }
 }
 
-.emerald-breath {
+.mint-breath {
   color: var(--accent-bolt);
-  animation: breathing 4s ease-in-out infinite;
+  animation: breathing-silk 5s ease-in-out infinite;
 }
 
-/* Tactile Softness */
-.btn-satin {
-  background: var(--bg-secondary);
+.btn-slate-minimal {
+  background: rgba(255, 255, 255, 0.03);
   border: var(--glass-border);
   color: var(--text-primary);
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  padding: 1rem 2.5rem;
-  border-radius: 20px;
+  letter-spacing: 0.1em;
+  padding: 1.25rem 3rem;
+  border-radius: 24px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.4s;
 }
 
-.btn-satin:hover {
-  background: rgba(255,255,255,0.05);
-  transform: translateY(-2px);
+.btn-slate-minimal:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 @keyframes shimmer {
