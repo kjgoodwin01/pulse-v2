@@ -99,14 +99,14 @@ const CommandCenter = () => {
           className="pb-20"
         >
           {activeTab === 'dashboard' && (
-            <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-[2rem]">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">NETWORK_HEARTBEAT</h2>
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Heartbeat</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">90_Day_Liquidity_Vector</div>
               </div>
               
               <div className="glass-card">
-                <Heartbeat forecastData={forecast} color="#39FF14" />
+                <Heartbeat forecastData={forecast} />
               </div>
 
               <div className="max-w-md mx-auto w-full">
@@ -116,13 +116,13 @@ const CommandCenter = () => {
           )}
 
           {activeTab === 'loans' && (
-            <div className="flex flex-col gap-8 max-w-2xl mx-auto">
+            <div className="flex flex-col gap-[2rem] max-w-2xl mx-auto">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">LOAN_ERADICATION</h2>
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Loans</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Student_Loan_Principal_v01</div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-[2rem]">
                 <div className="glass-card flex flex-col items-center justify-center text-center py-12">
                   <div className="relative w-40 h-40 mb-6">
                     <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
@@ -138,16 +138,16 @@ const CommandCenter = () => {
                   <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-1">Remaining Principal</div>
                 </div>
 
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-[2rem]">
                   <div className="glass-card">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="p-3 rounded-xl bg-rose-500/10 text-rose-500"><Clock size={20} /></div>
+                      <div className="p-3 rounded-xl bg-orange-500/10 text-[#f97316]"><Clock size={20} /></div>
                       <div>
                         <div className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Monthly Payment</div>
-                        <div className="text-2xl font-black mono text-white">$3,540.00</div>
+                        <div className="text-2xl font-black mono text-[#f97316]">$3,540.00</div>
                       </div>
                     </div>
-                    <div className="text-[9px] text-rose-400 font-bold uppercase tracking-wider">Non-Negotiable Fixed Cost</div>
+                    <div className="text-[9px] text-slate-600 font-bold uppercase tracking-wider">Non-Negotiable Fixed Cost</div>
                   </div>
 
                   <div className="glass-card">
@@ -166,9 +166,9 @@ const CommandCenter = () => {
           )}
 
           {activeTab === 'simulator' && (
-            <div className="max-w-2xl mx-auto flex flex-col gap-8">
+            <div className="max-w-2xl mx-auto flex flex-col gap-[2rem]">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">GATEKEEPER</h2>
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Simulator</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Liquidity_Simulation_Module</div>
               </div>
               <VerdictGatekeeper checkingBalance={checkingBalance} discoverBalance={discoverBalance} monthlyPayment={3540} />
@@ -176,9 +176,9 @@ const CommandCenter = () => {
           )}
 
           {activeTab === 'ledger' && (
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-[2rem] pt-8">
               <div className="text-center mb-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white mb-2">ENCLAVE_LEDGER</h2>
+                <h2 className="text-5xl font-black tracking-tighter text-white mb-2 uppercase">Ledger</h2>
                 <div className="text-[10px] text-slate-500 uppercase tracking-[0.5em] font-bold">Decentralized_Transaction_Feed</div>
               </div>
               <Ledger key={updateTick} />

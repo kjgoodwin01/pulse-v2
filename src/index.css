@@ -3,13 +3,13 @@
 :root {
   --bg-primary: #0A0C18;
   --bg-secondary: #13172a;
-  --bg-glass: rgba(19, 23, 42, 0.7);
+  --bg-glass: rgba(19, 23, 42, 0.8);
   --accent-bolt: #39FF14;
-  --accent-blue: #3b82f6;
+  --accent-blue: #00D1FF;
   --accent-orange: #f97316;
-  --text-primary: #f8fafc;
+  --text-primary: #ffffff;
   --text-secondary: #94a3b8;
-  --text-muted: #475569;
+  --text-muted: #64748b;
   --border-thin: none;
   
   --status-ok: #39FF14;
@@ -17,15 +17,16 @@
   --status-danger: #ef4444;
   --status-hazard: #a855f7;
 
-  --metallic-gloss: linear-gradient(
-    135deg, 
-    rgba(255,255,255,0.2) 0%, 
-    rgba(255,255,255,0.05) 50%, 
-    rgba(0,0,0,0.1) 100%
+  --metallic-chrome: linear-gradient(
+    180deg, 
+    #ffffff 0%, 
+    #94a3b8 40%, 
+    #475569 60%, 
+    #94a3b8 100%
   );
 
   font-family: 'Inter', sans-serif;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.05em;
 }
 
 body {
@@ -50,7 +51,7 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border: none;
   border-radius: 24px;
-  padding: 2rem;
+  padding: 1.5rem;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -58,38 +59,37 @@ body {
   background: rgba(19, 23, 42, 0.9);
 }
 
-/* Money Green Pulse */
+/* Money Green Pulse with Glow */
 .money-green-pulse {
   color: var(--accent-bolt);
-  filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.4));
+  filter: drop-shadow(0 0 12px rgba(57, 255, 20, 0.6));
   animation: money-pulse 2s infinite;
 }
 
 @keyframes money-pulse {
-  0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(57, 255, 20, 0.4)); }
-  50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(57, 255, 20, 0.8)); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(57, 255, 20, 0.4)); }
+  0% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(57, 255, 20, 1)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6)); }
 }
 
-/* Primary Glossy Button */
-.btn-glossy {
-  background: var(--metallic-gloss);
-  background-color: var(--accent-blue);
+/* Metallic Chrome Button */
+.btn-chrome {
+  background: var(--metallic-chrome);
   border: none;
   border-radius: 12px;
-  color: white;
-  font-weight: 800;
+  color: #050506;
+  font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: 1rem 2rem;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-.btn-glossy:hover {
+.btn-chrome:hover {
   transform: translateY(-2px);
-  filter: brightness(1.1);
+  filter: brightness(1.2);
 }
 
 /* Tabbed Navigation */
@@ -130,8 +130,8 @@ body {
   left: 0;
   width: 100%;
   height: 2px;
-  background: var(--accent-bolt);
-  box-shadow: 0 0 10px var(--accent-bolt);
+  background: var(--accent-blue);
+  box-shadow: 0 0 10px var(--accent-blue);
 }
 
 /* Command Center Layout - Single Page Focus */

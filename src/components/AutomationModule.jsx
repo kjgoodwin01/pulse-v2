@@ -99,7 +99,7 @@ const AutomationModule = ({ onUpdate }) => {
             $2,363.99
           </div>
         </div>
-        <button onClick={handlePayday} className="payday-btn flex items-center gap-2">
+        <button onClick={handlePayday} className="btn-chrome flex items-center gap-2">
           <DollarSign size={14} />
           Post Paycheck
         </button>

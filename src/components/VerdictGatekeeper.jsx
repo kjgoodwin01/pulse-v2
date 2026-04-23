@@ -48,7 +48,7 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
             />
             <button 
               onClick={handleSimulate}
-              className="btn-glossy flex items-center gap-3 whitespace-nowrap"
+              className="btn-chrome flex items-center gap-3 whitespace-nowrap"
               disabled={isSimulating}
             >
               {isSimulating ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} />}
