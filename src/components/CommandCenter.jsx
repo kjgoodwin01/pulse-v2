@@ -149,5 +149,3 @@ const CommandCenter = () => {
 };
 
 export default CommandCenter;
-
-export default CommandCenter;
