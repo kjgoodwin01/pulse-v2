@@ -5,6 +5,7 @@ const Heartbeat = ({ forecastData }) => {
   return (
     <div style={{ height: '380px' }}>
       <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={forecastData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="glowGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.03}/>
