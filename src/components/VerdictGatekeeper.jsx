@@ -9,8 +9,8 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
   const [isSimulating, setIsSimulating] = useState(false);
 
   // Precision Engine 5.0
-  const INFLOW = checkingBalance + (2 * 2363.99);
-  const OUTFLOW = discoverBalance + fixedExpenses + monthlyPayment;
+  const INFLOW = checkingBalance - discoverBalance;
+  const OUTFLOW = fixedExpenses + monthlyPayment;
   const MARGIN = INFLOW - OUTFLOW;
   const NET_MARGIN = MARGIN - simulatedSpend;
 
@@ -114,7 +114,7 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
                   <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
                     <div className="technical-label opacity-40 mb-2">Projected_Inflow</div>
                     <div className="text-2xl font-bold mono text-white">${INFLOW.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                    <div className="text-[10px] text-slate-500 font-mono mt-2">Checking + (2 × $2,363.99)</div>
+                    <div className="text-[10px] text-slate-500 font-mono mt-2">Checking - Discover</div>
                   </div>
                   <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
                     <div className="technical-label opacity-40 mb-2">Simulated_Outflow</div>
