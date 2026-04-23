@@ -19,6 +19,12 @@ export const debts = sqliteTable('debts', {
   min_payment: real('min_payment').notNull(),
 });
 
+export const fixed_expenses = sqliteTable('fixed_expenses', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  amount: real('amount').notNull(),
+});
+
 export const settings = sqliteTable('settings', {
   key: text('key').primaryKey(),
   value: text('value'),

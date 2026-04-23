@@ -14,18 +14,37 @@
   --metallic-chrome: linear-gradient(
     180deg, 
     #ffffff 0%, 
-    #e2e8f0 40%, 
+    #cbd5e1 50%, 
     #94a3b8 100%
   );
 
   font-family: 'Inter', sans-serif;
   letter-spacing: 0.05em;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+[data-theme='light'] {
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
+  --bg-glass: rgba(255, 255, 255, 0.8);
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --accent-nav: #00D1FF;
 }
 
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 body {
@@ -311,19 +330,47 @@ h1, h2, h3 {
 .transition-colors { transition-property: background-color, border-color, color, fill, stroke; }
 .duration-1000 { transition-duration: 1000ms; }
 
-/* Metallic Shimmer */
-.shimmer-text {
-  background: linear-gradient(
-    to right, 
-    #f8fafc 0%, 
-    #94a3b8 20%, 
-    #f8fafc 40%, 
-    #f8fafc 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 2s linear infinite;
+/* Settings Slide-over */
+.settings-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: var(--bg-secondary);
+  border-left: 1px solid rgba(255,255,255,0.1);
+  box-shadow: -20px 0 50px rgba(0,0,0,0.5);
+  z-index: 200;
+  padding: 3rem 2rem;
+}
+
+.input-glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  width: 100%;
+  transition: all 0.3s;
+}
+
+.input-glass:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.balance-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+  width: 100px;
+  outline: none;
 }
 
 @keyframes shimmer {

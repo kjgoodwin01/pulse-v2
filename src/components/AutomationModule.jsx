@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { Camera, RefreshCw, DollarSign, Loader2 } from 'lucide-react';
 import Tesseract from 'tesseract.js';
 
-const AutomationModule = ({ onUpdate }) => {
+const AutomationModule = ({ onUpdate, onOcrResult }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [shimmer, setShimmer] = useState(false);
   const [manualSync, setManualSync] = useState('');
@@ -18,9 +18,11 @@ const AutomationModule = ({ onUpdate }) => {
       const current = parseFloat(results[0]?.value || 0);
       const next = current + 2363.99;
       
-      await db.update(settings).set({ value: next.toString() }).where(eq(settings.key, 'current_checking_balance'));
+      await db.insert(settings).values({ key: 'current_checking_balance', value: next.toString() }).onConflictDoUpdate({
+        target: settings.key,
+        set: { value: next.toString() }
+      });
       
-      // Add transaction record
       await db.insert(transactions).values({
         date: new Date().toISOString().split('T')[0],
         amount: 2363.99,
@@ -44,23 +46,11 @@ const AutomationModule = ({ onUpdate }) => {
     setIsScanning(true);
     try {
       const { data: { text } } = await Tesseract.recognize(file, 'eng');
-      console.log('OCR Result:', text);
-
-      // Simple extraction logic (look for currency patterns and likely merchant names)
-      const amountMatch = text.match(/\$\d+\.\d{2}/);
-      const amount = amountMatch ? parseFloat(amountMatch[0].replace('$', '')) : 45.00; // Mocked if not found
       
-      // Mocked merchant for demo
+      const amountMatch = text.match(/\$\d+\.\d{2}/);
+      const amount = amountMatch ? parseFloat(amountMatch[0].replace('$', '')) : 45.00;
       const merchant = text.length > 5 ? text.substring(0, 15).trim() : 'Discover Transaction';
 
-      // Update Discover Balance (increment debt)
-      const results = await db.select().from(settings).where(eq(settings.key, 'current_discover_balance'));
-      const current = parseFloat(results[0]?.value || 0);
-      const next = current + amount;
-      
-      await db.update(settings).set({ value: next.toString() }).where(eq(settings.key, 'current_discover_balance'));
-
-      // Add to Ledger
       await db.insert(transactions).values({
         date: new Date().toISOString().split('T')[0],
         amount: -amount,
@@ -70,6 +60,7 @@ const AutomationModule = ({ onUpdate }) => {
         is_recurring: false
       });
 
+      if (onOcrResult) onOcrResult(amount);
       if (onUpdate) onUpdate();
     } catch (err) {
       console.error('OCR Scanning failed:', err);
@@ -81,7 +72,10 @@ const AutomationModule = ({ onUpdate }) => {
   const handleManualSync = async () => {
     if (!manualSync) return;
     try {
-      await db.update(settings).set({ value: manualSync }).where(eq(settings.key, 'current_checking_balance'));
+      await db.insert(settings).values({ key: 'current_checking_balance', value: manualSync }).onConflictDoUpdate({
+        target: settings.key,
+        set: { value: manualSync }
+      });
       setManualSync('');
       if (onUpdate) onUpdate();
     } catch (err) {
@@ -91,7 +85,6 @@ const AutomationModule = ({ onUpdate }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Payday Trigger */}
       <div className="glass-card flex items-center justify-between gap-4 p-4 border-[#eab308]/20">
         <div className="flex flex-col">
           <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-1">Payday Trigger</div>
@@ -115,7 +108,6 @@ const AutomationModule = ({ onUpdate }) => {
         </button>
       </div>
 
-      {/* Discover OCR Scanner */}
       <div className="glass-card p-4 flex flex-col gap-3">
         <div className="flex justify-between items-center">
           <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Discover OCR Scanner</div>
@@ -144,7 +136,6 @@ const AutomationModule = ({ onUpdate }) => {
         )}
       </div>
 
-      {/* Manual Override */}
       <div className="glass-card p-4 flex items-center gap-3">
         <input
           type="number"
