@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 3540, fixedExpenses = 0 }) => {
   const [proposedSpend, setProposedSpend] = useState('');
+  const [simulatedSpend, setSimulatedSpend] = useState(0);
   const [verdict, setVerdict] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
 
@@ -11,16 +12,18 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
   const INFLOW = checkingBalance + (2 * 2363.99);
   const OUTFLOW = discoverBalance + fixedExpenses + monthlyPayment;
   const MARGIN = INFLOW - OUTFLOW;
+  const NET_MARGIN = MARGIN - simulatedSpend;
 
   const handleSimulate = () => {
     setIsSimulating(true);
     setTimeout(() => {
       const spend = parseFloat(proposedSpend) || 0;
-      const netMargin = MARGIN - spend;
+      setSimulatedSpend(spend);
+      const net = MARGIN - spend;
       
-      if (netMargin > (fixedExpenses * 1.5)) {
+      if (net > (fixedExpenses * 1.5)) {
         setVerdict('SAFE');
-      } else if (netMargin > 0) {
+      } else if (net > 0) {
         setVerdict('CAUTION');
       } else {
         setVerdict('DENIED');
@@ -107,16 +110,16 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
                 <div className="grid grid-cols-3 gap-8">
                   <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
                     <div className="technical-label opacity-40 mb-2">Projected_Inflow</div>
-                    <div className="text-2xl font-bold mono text-white">${INFLOW.toLocaleString()}</div>
+                    <div className="text-2xl font-bold mono text-white">${INFLOW.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
                   <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
-                    <div className="technical-label opacity-40 mb-2">Total_Liabilities</div>
-                    <div className="text-2xl font-bold mono text-slate-400">${OUTFLOW.toLocaleString()}</div>
+                    <div className="technical-label opacity-40 mb-2">Simulated_Outflow</div>
+                    <div className="text-2xl font-bold mono text-slate-400">${(OUTFLOW + simulatedSpend).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
                   <div className="p-6 bg-white/[0.02] rounded-[24px] border border-white/[0.02]">
-                    <div className="technical-label opacity-40 mb-2">Residue_Margin</div>
-                    <div className={`text-2xl font-bold mono ${MARGIN > 0 ? 'text-[#10B981]' : 'text-[#ef4444]'}`}>
-                      ${MARGIN.toLocaleString()}
+                    <div className="technical-label opacity-40 mb-2">Net_Margin</div>
+                    <div className={`text-2xl font-bold mono ${NET_MARGIN > 0 ? 'text-[#10B981]' : 'text-[#ef4444]'}`}>
+                      ${NET_MARGIN.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   </div>
                 </div>
@@ -124,10 +127,10 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
                 <div className="p-6 rounded-[24px] bg-black/40 border border-white/5 shadow-[inset_0_2px_12px_rgba(0,0,0,0.5)]">
                   <p className="text-base text-slate-300 leading-relaxed">
                     {isSafe 
-                      ? "Safe Allocation. Your projected liquidity comfortably covers all fixed costs, student loan minimums, and this purchase while maintaining a strict 1.5x buffer margin."
+                      ? `Safe Allocation. A purchase of $${simulatedSpend.toLocaleString()} reduces your margin to $${NET_MARGIN.toLocaleString()}, which comfortably maintains your required safety buffer over fixed obligations.`
                       : isCaution
-                      ? "Caution Required. This purchase dips into your safety buffer. Your projected income still covers absolute costs, but emergency reserves are temporarily compromised."
-                      : `Action Denied. This transaction creates an immediate liability hazard against your non-negotiable $${monthlyPayment.toLocaleString()} student loan payoff vector.`}
+                      ? `Caution Required. Allocating $${simulatedSpend.toLocaleString()} severely restricts your liquidity to just $${NET_MARGIN.toLocaleString()}. Absolute costs are covered, but emergency reserves are compromised.`
+                      : `Action Denied. A $${simulatedSpend.toLocaleString()} purchase exceeds your available margin by $${Math.abs(NET_MARGIN).toLocaleString()}. This creates an immediate mathematical default hazard against your $${monthlyPayment.toLocaleString()} loan payment.`}
                   </p>
                 </div>
               </div>
