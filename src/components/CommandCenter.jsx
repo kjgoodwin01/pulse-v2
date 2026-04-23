@@ -1,29 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { useForecast } from '../hooks/useForecast';
 import { db } from '../db';
-import { debts } from '../db/schema';
+import { debts, settings } from '../db/schema';
+import { eq } from 'drizzle-orm';
 import Heartbeat from './Heartbeat';
 import KillSwitch from './KillSwitch';
 import BurnRate from './BurnRate';
 import Ledger from './Ledger';
-import { Zap } from 'lucide-react';
+import AutomationModule from './AutomationModule';
+import VerdictGatekeeper from './VerdictGatekeeper';
+import { Zap, ShieldCheck } from 'lucide-react';
 
 const CommandCenter = () => {
   const { forecast, loading, burnRate } = useForecast();
   const [debtData, setDebtData] = useState(null);
+  const [checkingBalance, setCheckingBalance] = useState(0);
+  const [discoverBalance, setDiscoverBalance] = useState(0);
+  const [updateTick, setUpdateTick] = useState(0);
+
+  const fetchBalances = async () => {
+    try {
+      const results = await db.select().from(settings);
+      const checking = results.find(s => s.key === 'current_checking_balance')?.value || '0';
+      const discover = results.find(s => s.key === 'current_discover_balance')?.value || '0';
+      setCheckingBalance(parseFloat(checking));
+      setDiscoverBalance(parseFloat(discover));
+
+      const debtResults = await db.select().from(debts);
+      setDebtData(debtResults[0] || { name: 'Student Loan', current_amount: 35000, total_amount: 35000, interest_rate: 0.05, min_payment: 400 });
+    } catch (err) {
+      console.warn('Balance fetch failed, using fallback:', err);
+    }
+  };
 
   useEffect(() => {
-    const fetchDebt = async () => {
-      try {
-        const results = await db.select().from(debts);
-        setDebtData(results[0] || { name: 'Student Loan', current_amount: 35000, total_amount: 35000, interest_rate: 0.05, min_payment: 400 });
-      } catch (err) {
-        console.warn('Falling back to mock debt data:', err);
-        setDebtData({ name: 'Student Loan', current_amount: 35000, total_amount: 35000, interest_rate: 0.05, min_payment: 400 });
-      }
-    };
-    fetchDebt();
-  }, []);
+    fetchBalances();
+  }, [updateTick, loading]);
 
   if (loading) {
     return (
@@ -31,13 +43,6 @@ const CommandCenter = () => {
         <div className="flex flex-col items-center gap-4">
           <div className="bolt-container pulse-health-good">
             <svg viewBox="0 0 24 24" className="w-6 h-6 bolt-metallic">
-              <defs>
-                <linearGradient id="metallicGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#9ca3af" />
-                  <stop offset="50%" stopColor="#f3f4f6" />
-                  <stop offset="100%" stopColor="#d1d5db" />
-                </linearGradient>
-              </defs>
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
           </div>
@@ -47,14 +52,14 @@ const CommandCenter = () => {
     );
   }
 
-  const pulseClass = burnRate > 40 ? 'pulse-health-critical' : burnRate > 20 ? 'pulse-health-warning' : 'pulse-health-good';
+  const triggerUpdate = () => setUpdateTick(prev => prev + 1);
 
   return (
     <div className="command-center">
       <div className="main-view">
         <header className="flex justify-between items-center mb-2 px-2">
           <div className="flex items-center gap-4">
-            <div className={`bolt-container ${pulseClass}`}>
+            <div className={`bolt-container ${checkingBalance > 4000 ? 'pulse-health-good' : 'pulse-health-warning'}`}>
               <svg viewBox="0 0 24 24" className="w-6 h-6 bolt-metallic">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
@@ -67,6 +72,12 @@ const CommandCenter = () => {
           
           <div className="flex items-center gap-8">
             <div className="text-right">
+              <div className="text-[9px] text-slate-600 uppercase tracking-widest font-bold mb-0.5">Liquid Assets</div>
+              <div className={`text-xl font-black mono flex items-center gap-2 justify-end ${updateTick > 0 ? 'shimmer-text' : 'text-white'}`}>
+                ${checkingBalance.toLocaleString()}
+              </div>
+            </div>
+            <div className="text-right">
               <div className="text-[9px] text-slate-600 uppercase tracking-widest font-bold mb-0.5">Network Status</div>
               <div className="text-[10px] font-black text-emerald-500 flex items-center gap-1 justify-end">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -78,19 +89,25 @@ const CommandCenter = () => {
 
         <Heartbeat forecastData={forecast} />
         
-        <Ledger />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Ledger key={updateTick} />
+          <div className="flex flex-col gap-6">
+            <VerdictGatekeeper checkingBalance={checkingBalance} discoverBalance={discoverBalance} />
+            <div className="glass-card bg-white/[0.01]">
+              <div className="card-header">
+                <span className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Discover Debt Monitor</span>
+              </div>
+              <div className="stat-huge text-rose-500/80">${discoverBalance.toLocaleString()}</div>
+              <div className="text-[8px] text-slate-600 uppercase tracking-[0.2em] mt-1 font-bold">Current_Liability_Discover_002</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="sidebar">
+        <AutomationModule onUpdate={triggerUpdate} />
         <BurnRate dailySpending={burnRate} />
         <KillSwitch debt={debtData} />
-        
-        <div className="glass-card bg-white/[0.02] border-dashed">
-          <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-2">AI Analyst Insights</div>
-          <p className="text-[11px] text-slate-400 leading-relaxed italic font-medium">
-            "Projected 90-day liquidity remains robust. Current burn-rate optimization suggests a $450 reallocation to the $35k Kill-Switch would accelerate crossover by 14 days."
-          </p>
-        </div>
       </div>
     </div>
   );

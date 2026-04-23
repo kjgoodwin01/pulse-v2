@@ -47,6 +47,8 @@ export const initSchema = async () => {
     });
 
     await sql`INSERT OR IGNORE INTO settings (key, value) VALUES ('initial_balance', '5000')`;
+    await sql`INSERT OR IGNORE INTO settings (key, value) VALUES ('current_checking_balance', '5000')`;
+    await sql`INSERT OR IGNORE INTO settings (key, value) VALUES ('current_discover_balance', '1250.45')`;
 
     const today = new Date().toISOString().split('T')[0];
     await db.insert(transactions).values([

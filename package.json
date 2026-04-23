@@ -22,6 +22,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^3.8.1",
-    "sqlocal": "^0.17.0"
+    "sqlocal": "^0.17.0",
+    "tesseract.js": "^6.0.0"
   }
 }
