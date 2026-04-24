@@ -91,7 +91,7 @@ Analyze the trajectory. Specifically identify any 3-paycheck months causing liqu
           'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-3-5-sonnet-20241022',
           max_tokens: 1024,
           system: systemPrompt,
           messages: [{ role: 'user', content: 'Analyze my trajectory and upcoming goals.' }],
@@ -181,7 +181,7 @@ Analyze the trajectory. Specifically identify any 3-paycheck months causing liqu
             </div>
             <div>
               <div className="text-2xl font-bold tracking-tight text-white mb-1">CFO_Core</div>
-              <span className="technical-label opacity-40">CLAUDE_3_HAIKU_ENGINE</span>
+              <span className="technical-label opacity-40">CLAUDE_3_5_SONNET_ENGINE</span>
             </div>
           </div>
 
