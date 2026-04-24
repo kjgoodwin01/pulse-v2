@@ -101,7 +101,7 @@ Analyze the trajectory. Specifically identify any 3-paycheck months causing liqu
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error?.message || 'API Request Failed');
+        throw new Error(JSON.stringify(errData.error || errData));
       }
       const data = await response.json();
       setAiResponse(data.content[0].text);
