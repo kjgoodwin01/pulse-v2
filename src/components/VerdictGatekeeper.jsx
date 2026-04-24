@@ -23,10 +23,11 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
       
       const totalFixedObligations = fixedExpenses + monthlyPayment;
       const safetyBuffer = totalFixedObligations * 1.5;
+      const criticalReserve = totalFixedObligations * 0.5;
 
-      if (net > safetyBuffer) {
+      if (net >= safetyBuffer) {
         setVerdict('SAFE');
-      } else if (net > 0) {
+      } else if (net >= criticalReserve) {
         setVerdict('CAUTION');
       } else {
         setVerdict('DENIED');
@@ -134,7 +135,9 @@ const VerdictGatekeeper = ({ checkingBalance, discoverBalance, monthlyPayment = 
                       ? `Safe Allocation. A purchase of $${simulatedSpend.toLocaleString()} reduces your margin to $${NET_MARGIN.toLocaleString()}, which comfortably maintains your required safety buffer over fixed obligations.`
                       : isCaution
                       ? `Caution Required. Allocating $${simulatedSpend.toLocaleString()} severely restricts your liquidity to just $${NET_MARGIN.toLocaleString()}. Absolute costs are covered, but emergency reserves are compromised.`
-                      : `Action Denied. A $${simulatedSpend.toLocaleString()} purchase exceeds your available margin by $${Math.abs(NET_MARGIN).toLocaleString()}. This creates an immediate mathematical default hazard against your $${monthlyPayment.toLocaleString()} loan payment.`}
+                      : NET_MARGIN < 0 
+                        ? `Action Denied. A $${simulatedSpend.toLocaleString()} purchase creates an absolute shortfall of $${Math.abs(NET_MARGIN).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}. This triggers an immediate mathematical default hazard against your $${monthlyPayment.toLocaleString()} loan payment.`
+                        : `Action Denied. While technically covered, a $${simulatedSpend.toLocaleString()} purchase leaves only $${NET_MARGIN.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} in liquidity. This violently breaches your absolute minimum critical reserve limit, exposing you to severe financial risk.`}
                   </p>
                 </div>
               </div>
