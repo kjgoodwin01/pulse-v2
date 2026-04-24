@@ -10,11 +10,28 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate }) => {
   const [newName, setNewName] = useState('');
   const [newAmount, setNewAmount] = useState('');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
     fetchExpenses();
+    fetchApiKey();
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  const fetchApiKey = async () => {
+    const results = await db.select().from(settings).where(eq(settings.key, 'openai_api_key'));
+    if (results.length > 0) {
+      setApiKey(results[0].value);
+    }
+  };
+
+  const handleSaveApiKey = async () => {
+    await db.insert(settings).values({ key: 'openai_api_key', value: apiKey }).onConflictDoUpdate({
+      target: settings.key,
+      set: { value: apiKey }
+    });
+    onUpdate();
+  };
 
   const fetchExpenses = async () => {
     const results = await db.select().from(fixed_expenses);
@@ -131,6 +148,20 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate }) => {
                     </button>
                   </div>
                 ))}
+              </div>
+            </section>
+            <section className="mb-12">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 block">AI_Integration</label>
+              <div className="flex flex-col gap-2">
+                <input 
+                  type="password"
+                  placeholder="sk-proj-..." 
+                  className="input-glass w-full"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  onBlur={handleSaveApiKey}
+                />
+                <span className="text-[10px] text-slate-500">Your OpenAI API Key is stored locally and never leaves your device.</span>
               </div>
             </section>
           </motion.div>

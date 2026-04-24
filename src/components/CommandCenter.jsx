@@ -6,6 +6,7 @@ import Ledger from './Ledger';
 import AutomationModule from './AutomationModule';
 import VerdictGatekeeper from './VerdictGatekeeper';
 import SettingsMenu from './SettingsMenu';
+import AIAdvisor from './AIAdvisor';
 import { db } from '../db';
 import { settings, fixed_expenses } from '../db/schema';
 
@@ -262,6 +263,17 @@ const CommandCenter = () => {
                 <Ledger key={updateTick} />
               </div>
             )}
+
+            {activeTab === 'advisor' && (
+              <AIAdvisor 
+                checking={checkingBalance}
+                discover={discoverBalance}
+                fixed={fixedExpensesTotal}
+                loanPrincipal={loanPrincipal}
+                loanMonthly={loanMonthlyPayment}
+                forecast={forecast}
+              />
+            )}
           </motion.main>
         </AnimatePresence>
       </div>
@@ -269,7 +281,7 @@ const CommandCenter = () => {
       {/* Dynamic Dock */}
       <div className="dynamic-dock-wrapper">
         <div className="dynamic-dock">
-          {['dashboard', 'loans', 'simulator', 'ledger'].map((tab) => (
+          {['dashboard', 'advisor', 'loans', 'simulator', 'ledger'].map((tab) => (
             <div 
               key={tab} 
               onClick={() => setActiveTab(tab)} 
