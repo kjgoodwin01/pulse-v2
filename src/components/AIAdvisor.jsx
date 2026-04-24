@@ -5,7 +5,7 @@ import { db } from '../db';
 import { settings } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
-const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, forecast, updateTick, apiKey }) => {
+const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, forecast, updateTick, apiKey, modelId }) => {
   const [goals, setGoals] = useState([]);
   const [newGoalName, setNewGoalName] = useState('');
   const [newGoalAmount, setNewGoalAmount] = useState('');
@@ -91,7 +91,7 @@ Analyze the trajectory. Specifically identify any 3-paycheck months causing liqu
           'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
+          model: modelId || 'claude-3-5-sonnet-20241022',
           max_tokens: 1024,
           system: systemPrompt,
           messages: [{ role: 'user', content: 'Analyze my trajectory and upcoming goals.' }],
@@ -181,7 +181,7 @@ Analyze the trajectory. Specifically identify any 3-paycheck months causing liqu
             </div>
             <div>
               <div className="text-2xl font-bold tracking-tight text-white mb-1">CFO_Core</div>
-              <span className="technical-label opacity-40">CLAUDE_3_5_SONNET_ENGINE</span>
+              <span className="technical-label opacity-40 uppercase">{modelId || 'CLAUDE_3_5_SONNET_ENGINE'}</span>
             </div>
           </div>
 

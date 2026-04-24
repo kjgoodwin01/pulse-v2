@@ -23,6 +23,7 @@ const CommandCenter = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [fixedExpensesTotal, setFixedExpensesTotal] = useState(0);
   const [claudeApiKey, setClaudeApiKey] = useState('');
+  const [claudeModel, setClaudeModel] = useState('claude-3-5-sonnet-20241022');
   const [loading, setLoading] = useState(true);
 
   // Precision Engine
@@ -62,11 +63,13 @@ const CommandCenter = () => {
       const loansData = results.find(s => s.key === 'loans_array')?.value;
       const monthly = results.find(s => s.key === 'loan_monthly_payment')?.value;
       const api_key = results.find(s => s.key === 'claude_api_key')?.value;
+      const model_id = results.find(s => s.key === 'claude_model')?.value;
       
       if (checking) setCheckingBalance(parseFloat(checking));
       if (discover) setDiscoverBalance(parseFloat(discover));
       if (monthly) setLoanMonthlyPayment(parseFloat(monthly));
       if (api_key) setClaudeApiKey(api_key);
+      if (model_id) setClaudeModel(model_id);
       if (loansData) {
         try { setLoans(JSON.parse(loansData)); } catch(e) {}
       }
@@ -261,6 +264,7 @@ const CommandCenter = () => {
                 forecast={forecast}
                 updateTick={updateTick}
                 apiKey={claudeApiKey}
+                modelId={claudeModel}
               />
             )}
           </motion.main>
@@ -295,6 +299,8 @@ const CommandCenter = () => {
         onUpdate={triggerUpdate}
         apiKey={claudeApiKey}
         setApiKey={setClaudeApiKey}
+        modelId={claudeModel}
+        setModelId={setClaudeModel}
       />
     </div>
   );

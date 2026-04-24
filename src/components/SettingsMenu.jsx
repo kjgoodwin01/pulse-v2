@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Settings, Moon, Sun } from 'lucide-react';
+import { X, Plus, Trash2, Settings, Moon, Sun, Network } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../db';
 import { fixed_expenses, settings } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
-const SettingsMenu = ({ isOpen, onClose, onUpdate, apiKey, setApiKey }) => {
+const SettingsMenu = ({ isOpen, onClose, onUpdate, apiKey, setApiKey, modelId, setModelId }) => {
   const [expenses, setExpenses] = useState([]);
   const [newName, setNewName] = useState('');
   const [newAmount, setNewAmount] = useState('');
@@ -160,7 +160,34 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate, apiKey, setApiKey }) => {
                     onUpdate();
                   }}
                 />
-                <span className="text-[10px] text-slate-500">Your Claude API Key is stored locally and never leaves your device.</span>
+                <span className="text-[10px] text-slate-500 mb-4">Your Claude API Key is stored locally and never leaves your device.</span>
+
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-white/[0.03] border border-white/10 rounded-xl">
+                    <Network size={18} className="text-[#3b82f6]" />
+                  </div>
+                  <select 
+                    value={modelId || 'claude-3-5-sonnet-20241022'}
+                    onChange={async (e) => {
+                      const val = e.target.value;
+                      setModelId(val);
+                      await db.insert(settings).values({ key: 'claude_model', value: val }).onConflictDoUpdate({
+                        target: settings.key,
+                        set: { value: val }
+                      });
+                      onUpdate();
+                    }}
+                    className="flex-1 input-glass"
+                    style={{background: '#0B101A'}}
+                  >
+                    <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (Latest)</option>
+                    <option value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet (Legacy)</option>
+                    <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                    <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+                    <option value="claude-3-haiku-20240307">Claude 3 Haiku</option>
+                  </select>
+                </div>
+
               </div>
             </section>
           </motion.div>
