@@ -25,13 +25,6 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate }) => {
     }
   };
 
-  const handleSaveApiKey = async () => {
-    await db.insert(settings).values({ key: 'claude_api_key', value: apiKey }).onConflictDoUpdate({
-      target: settings.key,
-      set: { value: apiKey }
-    });
-    onUpdate();
-  };
 
   const fetchExpenses = async () => {
     const results = await db.select().from(fixed_expenses);
@@ -158,8 +151,15 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate }) => {
                   placeholder="sk-ant-..." 
                   className="input-glass w-full"
                   value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  onBlur={handleSaveApiKey}
+                  onChange={async (e) => {
+                    const val = e.target.value;
+                    setApiKey(val);
+                    await db.insert(settings).values({ key: 'claude_api_key', value: val }).onConflictDoUpdate({
+                      target: settings.key,
+                      set: { value: val }
+                    });
+                    onUpdate();
+                  }}
                 />
                 <span className="text-[10px] text-slate-500">Your Claude API Key is stored locally and never leaves your device.</span>
               </div>

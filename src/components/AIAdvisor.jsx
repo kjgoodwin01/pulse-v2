@@ -5,7 +5,7 @@ import { db } from '../db';
 import { settings } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
-const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, forecast }) => {
+const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, forecast, updateTick }) => {
   const [goals, setGoals] = useState([]);
   const [newGoalName, setNewGoalName] = useState('');
   const [newGoalAmount, setNewGoalAmount] = useState('');
@@ -16,7 +16,7 @@ const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, fore
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [updateTick]);
 
   const fetchData = async () => {
     const results = await db.select().from(settings);
@@ -34,12 +34,16 @@ const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, fore
   };
 
   const saveGoals = async (newGoals) => {
-    const val = JSON.stringify(newGoals);
-    await db.insert(settings).values({ key: 'custom_goals', value: val }).onConflictDoUpdate({
-      target: settings.key,
-      set: { value: val }
-    });
-    setGoals(newGoals);
+    setGoals(newGoals); // Optimistic UI update
+    try {
+      const val = JSON.stringify(newGoals);
+      await db.insert(settings).values({ key: 'custom_goals', value: val }).onConflictDoUpdate({
+        target: settings.key,
+        set: { value: val }
+      });
+    } catch (e) {
+      console.error("Failed to save goals to SQLite:", e);
+    }
   };
 
   const addGoal = () => {

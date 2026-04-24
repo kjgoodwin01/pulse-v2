@@ -272,6 +272,7 @@ const CommandCenter = () => {
                 loanPrincipal={loanPrincipal}
                 loanMonthly={loanMonthlyPayment}
                 forecast={forecast}
+                updateTick={updateTick}
               />
             )}
           </motion.main>
