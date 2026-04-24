@@ -20,6 +20,7 @@ const CommandCenter = () => {
   const [updateTick, setUpdateTick] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [fixedExpensesTotal, setFixedExpensesTotal] = useState(0);
+  const [claudeApiKey, setClaudeApiKey] = useState('');
   const [loading, setLoading] = useState(true);
 
   // Precision Engine
@@ -53,11 +54,13 @@ const CommandCenter = () => {
       const discover = results.find(s => s.key === 'current_discover_balance')?.value;
       const principal = results.find(s => s.key === 'loan_principal')?.value;
       const monthly = results.find(s => s.key === 'loan_monthly_payment')?.value;
+      const api_key = results.find(s => s.key === 'claude_api_key')?.value;
       
       if (checking) setCheckingBalance(parseFloat(checking));
       if (discover) setDiscoverBalance(parseFloat(discover));
       if (principal) setLoanPrincipal(parseFloat(principal));
       if (monthly) setLoanMonthlyPayment(parseFloat(monthly));
+      if (api_key) setClaudeApiKey(api_key);
     } catch (err) {
       console.warn('Balance fetch failed:', err);
     }
@@ -273,6 +276,7 @@ const CommandCenter = () => {
                 loanMonthly={loanMonthlyPayment}
                 forecast={forecast}
                 updateTick={updateTick}
+                apiKey={claudeApiKey}
               />
             )}
           </motion.main>
@@ -305,6 +309,8 @@ const CommandCenter = () => {
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
         onUpdate={triggerUpdate}
+        apiKey={claudeApiKey}
+        setApiKey={setClaudeApiKey}
       />
     </div>
   );

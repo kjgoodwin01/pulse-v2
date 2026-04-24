@@ -5,12 +5,11 @@ import { db } from '../db';
 import { settings } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
-const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, forecast, updateTick }) => {
+const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, forecast, updateTick, apiKey }) => {
   const [goals, setGoals] = useState([]);
   const [newGoalName, setNewGoalName] = useState('');
   const [newGoalAmount, setNewGoalAmount] = useState('');
   const [newGoalMonth, setNewGoalMonth] = useState('August');
-  const [apiKey, setApiKey] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -20,10 +19,8 @@ const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, fore
 
   const fetchData = async () => {
     const results = await db.select().from(settings);
-    const keyMatch = results.find(s => s.key === 'claude_api_key');
     const goalsMatch = results.find(s => s.key === 'custom_goals');
     
-    if (keyMatch) setApiKey(keyMatch.value);
     if (goalsMatch && goalsMatch.value) {
       try {
         setGoals(JSON.parse(goalsMatch.value));

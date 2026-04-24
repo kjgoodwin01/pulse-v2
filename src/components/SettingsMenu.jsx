@@ -5,12 +5,11 @@ import { db } from '../db';
 import { fixed_expenses, settings } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
-const SettingsMenu = ({ isOpen, onClose, onUpdate }) => {
+const SettingsMenu = ({ isOpen, onClose, onUpdate, apiKey, setApiKey }) => {
   const [expenses, setExpenses] = useState([]);
   const [newName, setNewName] = useState('');
   const [newAmount, setNewAmount] = useState('');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
-  const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
     fetchExpenses();
