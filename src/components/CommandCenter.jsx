@@ -7,6 +7,8 @@ import AutomationModule from './AutomationModule';
 import VerdictGatekeeper from './VerdictGatekeeper';
 import SettingsMenu from './SettingsMenu';
 import AIAdvisor from './AIAdvisor';
+import LoansTab from './LoansTab';
+import TheRing from './TheRing';
 import { db } from '../db';
 import { settings, fixed_expenses } from '../db/schema';
 
@@ -14,7 +16,7 @@ const CommandCenter = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [checkingBalance, setCheckingBalance] = useState(2540.50);
   const [discoverBalance, setDiscoverBalance] = useState(1200.00);
-  const [loanPrincipal, setLoanPrincipal] = useState(20000.00);
+  const [loans, setLoans] = useState([]);
   const [loanMonthlyPayment, setLoanMonthlyPayment] = useState(3540.00);
   const [forecast, setForecast] = useState([]);
   const [updateTick, setUpdateTick] = useState(0);
@@ -27,7 +29,12 @@ const CommandCenter = () => {
   const INFLOW = checkingBalance + (2 * 2363.99);
   const OUTFLOW = discoverBalance + fixedExpensesTotal + loanMonthlyPayment;
   const MARGIN = INFLOW - OUTFLOW;
-  const eliminationHorizon = loanMonthlyPayment > 0 ? Math.ceil(loanPrincipal / loanMonthlyPayment) : 0;
+  const totalDebt = loans.reduce((sum, l) => sum + l.balance, 0);
+
+  // Cycle calculation
+  const now = new Date();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const daysRemaining = endOfMonth - now.getDate() + 1;
 
   useEffect(() => {
     const init = async () => {
@@ -52,15 +59,17 @@ const CommandCenter = () => {
       const results = await db.select().from(settings);
       const checking = results.find(s => s.key === 'current_checking_balance')?.value;
       const discover = results.find(s => s.key === 'current_discover_balance')?.value;
-      const principal = results.find(s => s.key === 'loan_principal')?.value;
+      const loansData = results.find(s => s.key === 'loans_array')?.value;
       const monthly = results.find(s => s.key === 'loan_monthly_payment')?.value;
       const api_key = results.find(s => s.key === 'claude_api_key')?.value;
       
       if (checking) setCheckingBalance(parseFloat(checking));
       if (discover) setDiscoverBalance(parseFloat(discover));
-      if (principal) setLoanPrincipal(parseFloat(principal));
       if (monthly) setLoanMonthlyPayment(parseFloat(monthly));
       if (api_key) setClaudeApiKey(api_key);
+      if (loansData) {
+        try { setLoans(JSON.parse(loansData)); } catch(e) {}
+      }
     } catch (err) {
       console.warn('Balance fetch failed:', err);
     }
@@ -91,6 +100,11 @@ const CommandCenter = () => {
       target: settings.key,
       set: { value }
     });
+  };
+
+  const updateLoans = (newLoans) => {
+    setLoans(newLoans);
+    saveSetting('loans_array', JSON.stringify(newLoans));
   };
 
   if (loading) {
@@ -168,11 +182,34 @@ const CommandCenter = () => {
           >
             {activeTab === 'dashboard' && (
               <div className="bento-grid">
+                
+                {/* The Ring Module */}
+                <div className="acrylic-card col-span-4 flex flex-col items-center justify-center p-8 relative">
+                  <div className="absolute top-6 left-6 technical-label opacity-40">SAFE_TO_SPEND</div>
+                  <TheRing 
+                    spent={discoverBalance} 
+                    target={1000} // Target Discovery limit
+                    daysRemaining={daysRemaining} 
+                    size={200}
+                  />
+                  <div className="mt-8 flex items-center justify-between w-full">
+                    <div>
+                      <span className="text-[10px] font-bold tracking-[0.2em] text-slate-500 block mb-1">BURN / DAY</span>
+                      <span className="text-xl font-bold font-mono text-white">${(discoverBalance / (now.getDate() || 1)).toFixed(2)}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] font-bold tracking-[0.2em] text-slate-500 block mb-1">DAYS LEFT</span>
+                      <span className="text-xl font-bold font-mono text-white">{daysRemaining}d</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="acrylic-card col-span-8 flex flex-col justify-between">
                   <div className="technical-label opacity-40 mb-12">Network_Liquidity</div>
                   <Heartbeat forecastData={forecast} />
                 </div>
-                <div className="acrylic-card col-span-4 p-0">
+                
+                <div className="acrylic-card col-span-12 p-0 h-[240px]">
                   <AutomationModule onUpdate={triggerUpdate} onOcrResult={(amt) => {
                     setDiscoverBalance(prev => {
                       const next = prev + amt;
@@ -185,68 +222,15 @@ const CommandCenter = () => {
             )}
 
             {activeTab === 'loans' && (
-              <div className="bento-grid">
-                <div className="acrylic-card col-span-6 flex flex-col items-center justify-center py-24 relative">
-                  <div className="absolute top-10 left-10 technical-label opacity-40">Principal_Residue</div>
-                  <div className="relative w-56 h-56 mb-12 mt-8">
-                    <svg viewBox="0 0 100 100" className="w-full h-full rotate-[-90deg]">
-                      <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="4" />
-                      <circle cx="50" cy="50" r="47" fill="none" stroke="#8b5cf6" strokeWidth="4" strokeDasharray="295" strokeDashoffset="147.5" strokeLinecap="round" />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <Zap size={32} className="text-[#8b5cf6] drop-shadow-[0_0_15px_rgba(139,92,246,0.5)] opacity-80" />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xl text-slate-500 font-bold">$</span>
-                    <input 
-                      type="number"
-                      value={loanPrincipal}
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value) || 0;
-                        setLoanPrincipal(val);
-                        saveSetting('loan_principal', val.toString());
-                      }}
-                      className="input-titanium text-5xl font-bold mono text-center w-[250px]"
-                    />
-                  </div>
-                </div>
-
-                <div className="col-span-6 grid grid-rows-2 gap-6">
-                  <div className="acrylic-card flex items-center gap-10">
-                    <div className="p-6 rounded-[32px] bg-white/[0.03] text-slate-400 border border-white/5 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]">
-                      <Clock size={32} />
-                    </div>
-                    <div className="flex flex-col">
-                      <label className="technical-label opacity-40 mb-2">Fixed_Liability</label>
-                      <div className="flex items-center gap-2">
-                        <span className="text-3xl text-slate-500 font-bold">$</span>
-                        <input 
-                          type="number"
-                          value={loanMonthlyPayment}
-                          onChange={(e) => {
-                            const val = parseFloat(e.target.value) || 0;
-                            setLoanMonthlyPayment(val);
-                            saveSetting('loan_monthly_payment', val.toString());
-                          }}
-                          className="input-titanium text-4xl font-bold mono w-[180px]"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="acrylic-card flex items-center gap-10">
-                    <div className="p-6 rounded-[32px] bg-white/[0.03] text-[#10b981] border border-white/5 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]">
-                      <Target size={32} />
-                    </div>
-                    <div>
-                      <div className="technical-label opacity-40 mb-2">Elimination_Horizon</div>
-                      <div className="text-4xl font-bold text-white flex items-baseline gap-2">
-                        {eliminationHorizon} <span className="text-xl text-slate-400">Months</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <LoansTab 
+                loans={loans} 
+                loanMonthlyPayment={loanMonthlyPayment} 
+                onUpdateLoans={updateLoans} 
+                onUpdatePayment={(val) => {
+                  setLoanMonthlyPayment(val);
+                  saveSetting('loan_monthly_payment', val.toString());
+                }} 
+              />
             )}
 
             {activeTab === 'simulator' && (
@@ -272,7 +256,7 @@ const CommandCenter = () => {
                 checking={checkingBalance}
                 discover={discoverBalance}
                 fixed={fixedExpensesTotal}
-                loanPrincipal={loanPrincipal}
+                loanPrincipal={totalDebt}
                 loanMonthly={loanMonthlyPayment}
                 forecast={forecast}
                 updateTick={updateTick}
