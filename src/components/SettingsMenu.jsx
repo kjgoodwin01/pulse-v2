@@ -151,7 +151,7 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate, apiKey, setApiKey }) => {
                   className="input-glass w-full"
                   value={apiKey}
                   onChange={async (e) => {
-                    const val = e.target.value;
+                    const val = e.target.value.trim();
                     setApiKey(val);
                     await db.insert(settings).values({ key: 'claude_api_key', value: val }).onConflictDoUpdate({
                       target: settings.key,
