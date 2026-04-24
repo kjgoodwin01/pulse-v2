@@ -19,14 +19,14 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate }) => {
   }, [theme]);
 
   const fetchApiKey = async () => {
-    const results = await db.select().from(settings).where(eq(settings.key, 'openai_api_key'));
+    const results = await db.select().from(settings).where(eq(settings.key, 'claude_api_key'));
     if (results.length > 0) {
       setApiKey(results[0].value);
     }
   };
 
   const handleSaveApiKey = async () => {
-    await db.insert(settings).values({ key: 'openai_api_key', value: apiKey }).onConflictDoUpdate({
+    await db.insert(settings).values({ key: 'claude_api_key', value: apiKey }).onConflictDoUpdate({
       target: settings.key,
       set: { value: apiKey }
     });
@@ -155,13 +155,13 @@ const SettingsMenu = ({ isOpen, onClose, onUpdate }) => {
               <div className="flex flex-col gap-2">
                 <input 
                   type="password"
-                  placeholder="sk-proj-..." 
+                  placeholder="sk-ant-..." 
                   className="input-glass w-full"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   onBlur={handleSaveApiKey}
                 />
-                <span className="text-[10px] text-slate-500">Your OpenAI API Key is stored locally and never leaves your device.</span>
+                <span className="text-[10px] text-slate-500">Your Claude API Key is stored locally and never leaves your device.</span>
               </div>
             </section>
           </motion.div>

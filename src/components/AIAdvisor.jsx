@@ -20,7 +20,7 @@ const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, fore
 
   const fetchData = async () => {
     const results = await db.select().from(settings);
-    const keyMatch = results.find(s => s.key === 'openai_api_key');
+    const keyMatch = results.find(s => s.key === 'claude_api_key');
     const goalsMatch = results.find(s => s.key === 'custom_goals');
     
     if (keyMatch) setApiKey(keyMatch.value);
@@ -56,14 +56,14 @@ const AIAdvisor = ({ checking, discover, fixed, loanPrincipal, loanMonthly, fore
 
   const analyze = async () => {
     if (!apiKey) {
-      setAiResponse('ERROR: OpenAI API Key missing. Configure in System Settings.');
+      setAiResponse('ERROR: Claude API Key missing. Configure in System Settings.');
       return;
     }
 
     setIsAnalyzing(true);
     setAiResponse('');
 
-    const prompt = `You are the Pulse AI Chief Financial Officer. You provide hyper-analytical, aggressive, and highly strategic financial advice.
+    const systemPrompt = `You are the Pulse AI Chief Financial Officer. You provide hyper-analytical, aggressive, and highly strategic financial advice.
 
 CURRENT STATE:
 - Checking Liquidity: $${checking}
@@ -81,24 +81,31 @@ TASK:
 Analyze the trajectory. Specifically identify any 3-paycheck months causing liquidity spikes. Tell the user exactly *when* they can safely execute their goals without breaching their $1000 Discover limit or missing their loan payment. Be concise, intense, and use formatting.`;
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [{ role: 'system', content: prompt }],
+          model: 'claude-3-haiku-20240307',
+          max_tokens: 1024,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: 'Analyze my trajectory and upcoming goals.' }],
           temperature: 0.3
         })
       });
 
-      if (!response.ok) throw new Error('API Request Failed');
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error?.message || 'API Request Failed');
+      }
       const data = await response.json();
-      setAiResponse(data.choices[0].message.content);
+      setAiResponse(data.content[0].text);
     } catch (err) {
-      setAiResponse('ERROR: Connection to AI core failed. Check your API key and network.');
+      setAiResponse(`ERROR: Connection to AI core failed. ${err.message}`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -173,7 +180,7 @@ Analyze the trajectory. Specifically identify any 3-paycheck months causing liqu
             </div>
             <div>
               <div className="text-2xl font-bold tracking-tight text-white mb-1">CFO_Core</div>
-              <span className="technical-label opacity-40">GPT_4o_MINI_ENGINE</span>
+              <span className="technical-label opacity-40">CLAUDE_3_HAIKU_ENGINE</span>
             </div>
           </div>
 
@@ -192,7 +199,7 @@ Analyze the trajectory. Specifically identify any 3-paycheck months causing liqu
             <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
               <Bot size={48} className="mb-4 text-slate-600" />
               <p>AI Engine Offline.</p>
-              <p>Supply an OpenAI API Key in System Settings to activate CFO Core.</p>
+              <p>Supply a Claude API Key in System Settings to activate CFO Core.</p>
             </div>
           ) : !aiResponse && !isAnalyzing ? (
             <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
